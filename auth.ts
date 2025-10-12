@@ -18,13 +18,8 @@ export const auth = betterAuth({
       role: {
         type: "string",
         required: true,
-        defaultValue: "free",
+        defaultValue: "user",
         input: false, // don't allow user to set role
-      },
-      lang: {
-        type: "string",
-        required: false,
-        defaultValue: "en",
       },
     },
   },

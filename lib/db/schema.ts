@@ -23,12 +23,6 @@ type Caption = {
   confidence: number | null;
 };
 
-export const todo = pgTable("todo", {
-  id: integer("id").primaryKey(),
-  text: text("text").notNull(),
-  done: boolean("done").default(false).notNull(),
-});
-
 export const context = pgTable("Context", {
   id: text("id").primaryKey(),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
@@ -177,11 +171,19 @@ export const message = pgTable("Message", {
 });
 
 export type DBMessage = InferSelectModel<typeof message>;
-export const user = pgTable("user", {
+
+export const user = pgTable("User", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
+  role: text("role").default("user"),
+  credits: integer("credits").notNull().default(0),
+  reservedCredits: integer("reservedCredits").notNull().default(0),
+  stripeCustomerId: text("stripe_customer_id"),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
+  banned: boolean("banned").default(false),
+  banReason: text("ban_reason"),
+  banExpires: timestamp("ban_expires"),
   image: text("image"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -190,7 +192,7 @@ export const user = pgTable("user", {
     .notNull(),
 });
 
-export const session = pgTable("session", {
+export const session = pgTable("Session", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
@@ -205,7 +207,7 @@ export const session = pgTable("session", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-export const account = pgTable("account", {
+export const account = pgTable("Account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
@@ -225,7 +227,7 @@ export const account = pgTable("account", {
     .notNull(),
 });
 
-export const verification = pgTable("verification", {
+export const verification = pgTable("Verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
