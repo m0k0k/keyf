@@ -46,7 +46,7 @@ export const project = pgTable("Project", {
   title: text("title").notNull(),
   contextId: text("contextId")
     .notNull()
-    .references(() => context.id),
+    .references(() => context.id, { onDelete: "cascade" }),
 
   userId: text("userId")
     .notNull()
@@ -65,11 +65,11 @@ export const document = pgTable(
     id: text("id").notNull(),
     createdAt: timestamp("createdAt").notNull(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
-    title: text("title").notNull().default("My Editor Project"),
+    title: text("title").notNull().default("Video Document"),
     state: jsonb("state").notNull(),
     projectId: text("projectId")
       .notNull()
-      .references(() => project.id),
+      .references(() => project.id, { onDelete: "cascade" }),
     userId: text("userId")
       .notNull()
       .references(() => user.id),
@@ -118,7 +118,7 @@ export const asset = pgTable(
     documentId: text("documentId"),
     projectId: text("projectId")
       .notNull()
-      .references(() => project.id),
+      .references(() => project.id, { onDelete: "cascade" }),
     userId: text("userId")
       .notNull()
       .references(() => user.id),
@@ -131,6 +131,40 @@ export const asset = pgTable(
 );
 export type DBAsset = InferSelectModel<typeof asset>;
 
+export const assetImage = pgTable(
+  "AssetImage",
+  {
+    id: text("id").notNull(),
+    createdAt: timestamp("createdAt").notNull(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+    filename: text("filename").notNull(),
+    size: integer("size").notNull(),
+    remoteUrl: text("remoteUrl"),
+    remoteFileKey: text("remoteFileKey"),
+    mimeType: text("mimeType").notNull(),
+    type: varchar("type", {
+      enum: ["image", "video", "gif", "audio", "caption"],
+    }).notNull(),
+
+    width: integer("width").notNull(),
+    height: integer("height").notNull(),
+
+    documentId: text("documentId"),
+    projectId: text("projectId")
+      .notNull()
+      .references(() => project.id, { onDelete: "cascade" }),
+    userId: text("userId")
+      .notNull()
+      .references(() => user.id),
+    visibility: varchar("visibility", { enum: ["public", "private"] })
+      .notNull()
+      .default("private"),
+    isPinned: boolean("isPinned").notNull().default(false),
+  },
+  (table) => [primaryKey({ columns: [table.id, table.createdAt] })],
+);
+export type DBAssetImage = InferSelectModel<typeof assetImage>;
+
 export const chat = pgTable("Chat", {
   id: text("id").primaryKey(),
   createdAt: timestamp("createdAt").notNull(),
@@ -140,7 +174,7 @@ export const chat = pgTable("Chat", {
   projectId: text("projectId"),
   userId: text("userId")
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: "cascade" }),
   visibility: varchar("visibility", { enum: ["public", "private"] })
     .notNull()
     .default("private"),
@@ -171,6 +205,20 @@ export const message = pgTable("Message", {
 });
 
 export type DBMessage = InferSelectModel<typeof message>;
+
+export const run = pgTable("Run", {
+  id: text("id").primaryKey(),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id),
+  status: varchar("status", {
+    enum: ["queued", "running", "completed", "failed"],
+  })
+    .notNull()
+    .default("queued"),
+  publicAccessToken: text("publicAccessToken").notNull(),
+});
 
 export const user = pgTable("User", {
   id: text("id").primaryKey(),

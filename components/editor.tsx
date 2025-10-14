@@ -13,6 +13,7 @@ import { TimelineContainer } from "../editor/timeline/timeline-container";
 import { TopPanel } from "../editor/top-panel";
 import { WaitForInitialized } from "../editor/wait-for-initialized";
 import { EditModeContext } from "@/editor/edit-mode";
+import { cn } from "@/lib/utils";
 
 export const Editor: React.FC<{ projectId: string; title: string }> = ({
   projectId,
@@ -21,7 +22,15 @@ export const Editor: React.FC<{ projectId: string; title: string }> = ({
   const playerRef = useRef<PlayerRef | null>(null);
   const { editMode } = useContext(EditModeContext);
   return (
-    <div className="bg-editor-starter-bg mr-1 mb-1 flex w-full flex-col items-start justify-between">
+    <div
+      className={cn(
+        editMode === "preview"
+          ? "bg-editor-starter-bg"
+          : "bg-radial-[at_40%_50%] from-white/5 via-neutral-900/5 to-black",
+
+        "mr-1 mb-1 flex w-full flex-col items-start justify-between",
+      )}
+    >
       <WaitForInitialized>
         <PreviewSizeProvider>
           <ActionRow

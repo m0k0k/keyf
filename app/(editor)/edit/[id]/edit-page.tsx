@@ -36,12 +36,12 @@ export function EditPage({ id }: { id: string }) {
         <Finder projectId={project.id} documents={documents} />
         <Editor projectId={project.id} title={project.title} />
 
-        <Chat
+        {/* <Chat
           id={project.id}
           chats={chats}
           initialMessages={[]}
           playerRef={playerRef}
-        />
+        /> */}
       </ContextProvider>
     </div>
   );

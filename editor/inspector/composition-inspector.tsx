@@ -23,6 +23,7 @@ import {
   NumberControlUpdateHandler,
 } from "./controls/number-controls";
 import { Button } from "@/components/ui/button";
+import { GeneratePanel } from "@/components/generate-panel";
 
 export const CompositionInspector: React.FC = () => {
   const { durationInFrames } = useTimelineContext();
@@ -99,26 +100,7 @@ export const CompositionInspector: React.FC = () => {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-1.5 p-1.5">
-        <Button className="h-20 rounded-xl bg-black text-neutral-200 hover:text-neutral-900">
-          Upscale
-        </Button>
-        <Button className="h-20 rounded-xl bg-black text-neutral-200 hover:text-neutral-900">
-          Downscale
-        </Button>
-      </div>
-      <div className="grid grid-cols-1 gap-1.5 p-1.5">
-        <div className="flex h-20 w-full items-center justify-center rounded-2xl border border-dashed border-neutral-700 text-xs">
-          {" "}
-          Upload
-        </div>
-      </div>{" "}
-      <div className="grid grid-cols-1 gap-1.5 p-1.5">
-        <div className="flex h-10 w-full items-center justify-center rounded-3xl border border-neutral-700 bg-fuchsia-500 text-sm font-semibold text-white">
-          {" "}
-          Generate
-        </div>
-      </div>
+      <GeneratePanel />
       <div className="hidden">
         <InspectorSection>
           <InspectorLabel>Canvas</InspectorLabel>

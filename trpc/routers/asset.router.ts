@@ -3,6 +3,7 @@ import { z } from "zod";
 import { EditorStarterAsset } from "@/editor/assets/assets";
 import {
   getAssetsByProjectId,
+  getImageAssetsByProjectId,
   getProjectIdByDocumentId,
   saveAsset,
 } from "@/lib/db/queries";
@@ -110,6 +111,22 @@ export const assetRouter = createTRPCRouter({
     .input(z.object({ projectId: z.string() }))
     .query(async ({ ctx, input }) => {
       const assets = await getAssetsByProjectId(input.projectId);
+      return assets;
+    }),
+  getAssetsByDocumentId: protectedProcedure
+    .input(z.object({ documentId: z.string() }))
+
+    .query(async ({ ctx, input }) => {
+      const projectId = await getProjectIdByDocumentId(input.documentId);
+      const assets = await getAssetsByProjectId(projectId);
+      return assets;
+    }),
+  getImageAssetsByDocumentId: protectedProcedure
+    .input(z.object({ documentId: z.string() }))
+
+    .query(async ({ ctx, input }) => {
+      const projectId = await getProjectIdByDocumentId(input.documentId);
+      const assets = await getImageAssetsByProjectId(projectId);
       return assets;
     }),
 });

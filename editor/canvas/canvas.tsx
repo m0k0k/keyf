@@ -1,6 +1,6 @@
 import { PlayerRef } from "@remotion/player";
 import React, { useCallback, useContext, useEffect } from "react";
-import { EditModeContext } from "../edit-mode";
+
 import {
   FEATURE_CANVAS_ZOOM_GESTURES,
   FEATURE_CANVAS_ZOOM_KEYBOARD_SHORTCUTS,
@@ -27,6 +27,7 @@ import { useElementSize } from "../utils/use-element-size";
 import { useKeybinding } from "../utils/use-keybindings";
 import { CanvasSizeProvider } from "./canvas-size";
 import { ScaledPlayer } from "./scaled-player";
+import { EditModeContext } from "@/editor/edit-mode";
 
 export const canvasRef = React.createRef<HTMLDivElement | null>();
 
@@ -268,6 +269,7 @@ export const Canvas = ({
         "mt-0 flex flex-1 overflow-hidden select-none",
         editMode === "draw-solid" && "cursor-crosshair",
         editMode === "create-text" && "cursor-text",
+        editMode === "preview" && "",
       )}
     >
       <div className="relative flex flex-1 flex-col" ref={canvasRef}>

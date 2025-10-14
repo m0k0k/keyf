@@ -1,7 +1,8 @@
-import {} from "@/lib/db/queries";
+import { getRunsByUserId, saveRun } from "@/lib/db/queries";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { z } from "zod";
-
+import { helloWorld } from "@/trigger/hello-world";
+import { imagen4 } from "@/trigger/imagen4";
 export const generateRouter = createTRPCRouter({
   kieImagen4: protectedProcedure
     .input(
@@ -19,20 +20,42 @@ export const generateRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const resp = await kieApi().postJSON<any>("/api/v1/jobs/createTask", {
-        model: "google/imagen4-fast",
-        input: {
-          prompt: input.prompt,
-          aspect_ratio: "9:16",
-        },
-        callBackUrl: "https://faceless.art/api/kie/playground-callback", // Optional
-      });
-      if (resp.code !== 200) {
-        throw new Error("Failed to create a task");
-      }
-      const taskId = resp.data.taskId;
+      // const resp = await kieApi().postJSON<any>("/api/v1/jobs/createTask", {
+      //   model: "google/imagen4-fast",
+      //   input: {
+      //     prompt: input.prompt,
+      //     aspect_ratio: "9:16",
+      //   },
+      //   callBackUrl: "https://faceless.art/api/kie/playground-callback", // Optional
+      // });
+      // if (resp.code !== 200) {
+      //   throw new Error("Failed to create a task");
+      // }
+      // const taskId = resp.data.taskId;
 
-      return taskId as string;
+      // return taskId as string;
+
+      //This triggers the task and returns a handle
+
+      const handle = await imagen4.trigger({
+        userId: ctx.user.id,
+        model: input.model,
+        prompt: input.prompt,
+        negativePrompt: input.negativePrompt || "",
+        aspectRatio: input.aspectRatio || "",
+        num_images: input.num_images,
+        seed: input.seed || 0,
+      });
+
+      await saveRun({
+        id: handle.id,
+        publicAccessToken: handle.publicAccessToken,
+        userId: ctx.user.id,
+      });
+      return handle.id;
+
+      //You can use the handle to check the status of the task, cancel and retry it.
+      console.log("Task is running with handle", handle.id);
     }),
   getTaskResult: protectedProcedure
     .input(
@@ -46,6 +69,10 @@ export const generateRouter = createTRPCRouter({
       );
       return resp;
     }),
+  getRuns: protectedProcedure.query(async ({ ctx }) => {
+    const runs = await getRunsByUserId({ userId: ctx.user.id });
+    return runs;
+  }),
 });
 
 function kieApi() {

@@ -48,7 +48,9 @@ export function MessageInput({
     }),
     onFinish: async ({}) => {
       queryClient.invalidateQueries({
-        queryKey: trpc.asset.getAssetsByProjectId.queryKey(),
+        queryKey: trpc.asset.getAssetsByDocumentId.queryKey({
+          documentId: documentId,
+        }),
       });
     },
   });

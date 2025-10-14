@@ -1,7 +1,7 @@
 import "server-only";
 import { db } from "@/lib/db/drizzle";
 
-import { eq, desc, asc } from "drizzle-orm";
+import { eq, desc, asc, gte } from "drizzle-orm";
 import {
   chat,
   DBMessage,
@@ -11,6 +11,9 @@ import {
   context,
   asset,
   DBAsset,
+  run,
+  assetImage,
+  DBAssetImage,
 } from "./schema";
 import { ChatMessage } from "@/lib/ai/types";
 import { EditorState, UndoableState } from "@/editor/state/types";
@@ -30,7 +33,42 @@ export async function saveContext({
 }
 
 export async function getContextsByUserId({ userId }: { userId: string }) {
-  return await db.select().from(context).where(eq(context.userId, userId));
+  return await db
+    .select({ name: context.name, id: context.id })
+    .from(context)
+    .where(eq(context.userId, userId));
+}
+
+export async function saveRun({
+  id,
+  userId,
+  publicAccessToken,
+}: {
+  id: string;
+  userId: string;
+  publicAccessToken: string;
+}) {
+  return await db.insert(run).values({ id, userId, publicAccessToken });
+}
+export async function getRunsByUserId({ userId }: { userId: string }) {
+  return await db.select().from(run).where(eq(run.userId, userId));
+}
+
+export async function updateRun({
+  id,
+  status,
+}: {
+  id: string;
+  status: "queued" | "running" | "completed" | "failed";
+}) {
+  return await db.update(run).set({ status }).where(eq(run.id, id));
+}
+export async function saveAssetImage({
+  _assetImage,
+}: {
+  _assetImage: DBAssetImage;
+}) {
+  return await db.insert(assetImage).values(_assetImage);
 }
 
 export async function getContextById({ id }: { id: string }) {
@@ -39,6 +77,7 @@ export async function getContextById({ id }: { id: string }) {
 export async function getProjectsByContextId({ id }: { id: string }) {
   return await db.select().from(project).where(eq(project.contextId, id));
 }
+
 export async function saveDocument({
   id,
   userId,
@@ -319,4 +358,11 @@ export async function saveAsset({ _asset }: { _asset: DBAsset }) {
 
 export async function getAssetsByProjectId(projectId: string) {
   return await db.select().from(asset).where(eq(asset.projectId, projectId));
+}
+
+export async function getImageAssetsByProjectId(projectId: string) {
+  return await db
+    .select()
+    .from(assetImage)
+    .where(eq(assetImage.projectId, projectId));
 }

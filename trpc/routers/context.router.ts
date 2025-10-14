@@ -42,6 +42,7 @@ export const contextRouter = createTRPCRouter({
       const brand = await getProjectsByContextId({ id: input.id });
       return brand;
     }),
+
   saveBrand: protectedProcedure
     .input(
       z.object({
@@ -62,5 +63,10 @@ export const contextRouter = createTRPCRouter({
   getAllBrands: protectedProcedure.query(async ({ ctx }) => {
     const brands = await getContextsByUserId({ userId: ctx.user.id });
     return brands;
+  }),
+  getAllContexts: protectedProcedure.query(async ({ ctx }) => {
+    const contexts = await getContextsByUserId({ userId: ctx.user.id });
+
+    return contexts.map((context) => ({ name: context.name, id: context.id }));
   }),
 });

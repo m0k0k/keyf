@@ -1,5 +1,5 @@
 import { DocumentIdProvider } from "@/providers/document-id-provider";
-export default async function ChatLayout({
+export default async function EditorLayout({
   children,
 }: {
   children: React.ReactNode;

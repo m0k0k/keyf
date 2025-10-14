@@ -6,7 +6,7 @@ function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="skeleton"
-      className={cn("bg-background animate-pulse rounded-md", className)}
+      className={cn("bg-background animate-pulse", className)}
       {...props}
     />
   );
@@ -30,7 +30,7 @@ export function WithSkeleton({
 
       {(!mounted || isLoading) && (
         <>
-          <div className={cn("bg-background absolute inset-0", className)} />
+          <div className={cn("absolute inset-0 bg-neutral-400", className)} />
 
           <Skeleton className={cn("absolute inset-0", className)} />
         </>

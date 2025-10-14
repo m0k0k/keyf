@@ -75,7 +75,8 @@ export default function Chat({
   return (
     <>
       <div className="flex max-w-[300px] min-w-[300px] p-1 pl-0">
-        <div className="flex h-full w-full flex-col rounded-2xl transition-all duration-700 ease-in-out [background:linear-gradient(135deg,_#a259ff_0%,_#000_35%,_#a259ff_35%,_#ff6f3c_50%,_#212121_100%)]">
+        <div className="bg-editor-starter-panel flex h-full w-full flex-col rounded-3xl transition-all duration-700 ease-in-out">
+          {/* [background:linear-gradient(135deg,_#a259ff_0%,_#000_35%,_#a259ff_35%,_#ff6f3c_50%,_#212121_100%)] */}
           {/* Chat Header */}
 
           {/* Past Chats List */}
@@ -109,6 +110,7 @@ export default function Chat({
                     setMessages([]);
                     setSelectedChatId(null);
                   }}
+                  variant="outline"
                   className="h-7 p-2 transition-colors"
                 >
                   <MaterialSymbolsAddCircleRounded />

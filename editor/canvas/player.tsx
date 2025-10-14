@@ -53,12 +53,17 @@ export const RemotionPlayer = ({
   const style = useMemo(() => {
     return {
       width: "100%",
-      overflow: editMode === "select" ? "hidden" : "visible",
+      overflow: editMode === "preview" ? "hidden" : "visible",
       height: "100%",
+
       // border: "1px solid #ccc",
-      borderRadius: "32px",
-      outline: editMode === "select" ? "20px solid #000" : "none",
-      boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.5)",
+      borderRadius: editMode === "preview" ? "32px" : "0px",
+      outline: editMode === "preview" ? "0px solid #000" : "none",
+
+      boxShadow:
+        editMode === "preview" || editMode === "select"
+          ? "0 0 100px 0 rgba(255, 255, 255, 0.1)"
+          : "none",
     };
   }, [editMode]);
 
