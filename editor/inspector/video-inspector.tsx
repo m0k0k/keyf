@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { GenerateCaptionSection } from "../captioning/caption-section";
 import {
   FEATURE_ALIGNMENT_CONTROL,
@@ -31,93 +31,107 @@ import { PositionControl } from "./controls/position-control";
 import { RotationControl } from "./controls/rotation-controls";
 import { SourceControls } from "./controls/source-info/source-info";
 import { VolumeControls } from "./controls/volume-controls";
+import { Button } from "@/components/ui/button";
 
 const VideoInspectorUnmemoized: React.FC<{
   item: VideoItem;
 }> = ({ item }) => {
   const asset = useAssetFromItem(item);
-
+  const [itemSettings, setItemSettings] = useState(false);
   if (asset.type !== "video") {
     throw new Error("Video inspector not supported for video assets");
   }
 
   return (
-    <div className="flex hidden h-full flex-col gap-1 overflow-y-auto">
-      {FEATURE_SOURCE_CONTROL && <SourceControls item={item} />}
-      <InspectorSection>
-        <InspectorLabel>Layout</InspectorLabel>
-        {FEATURE_ALIGNMENT_CONTROL && <AlignmentControls itemId={item.id} />}
-        {FEATURE_POSITION_CONTROL && (
-          <PositionControl left={item.left} top={item.top} itemId={item.id} />
-        )}
-        {FEATURE_DIMENSIONS_CONTROL && (
-          <DimensionsControls
-            itemId={item.id}
-            height={item.height}
-            width={item.width}
-          />
-        )}
-        {FEATURE_ROTATION_CONTROL && (
-          <RotationControl rotation={item.rotation} itemId={item.id} />
-        )}
-      </InspectorSection>
-      <InspectorDivider />
-      <InspectorSection>
-        <InspectorLabel>Fill</InspectorLabel>
-        {FEATURE_OPACITY_CONTROL && (
-          <OpacityControls opacity={item.opacity} itemId={item.id} />
-        )}
-        {FEATURE_BORDER_RADIUS_CONTROL && (
-          <BorderRadiusControl
-            borderRadius={item.borderRadius}
-            itemId={item.id}
-          />
-        )}
-      </InspectorSection>
-      <InspectorDivider />
-      <InspectorSection>
-        <InspectorLabel>Video</InspectorLabel>
-        {FEATURE_PLAYBACKRATE_CONTROL && (
-          <PlaybackRateControls
-            playbackRate={item.playbackRate}
-            itemId={item.id}
-            assetId={item.assetId}
-          />
-        )}
-        {FEATURE_VISUAL_FADE_CONTROL && (
-          <FadeControls
-            fadeInDuration={item.fadeInDurationInSeconds}
-            fadeOutDuration={item.fadeOutDurationInSeconds}
-            itemId={item.id}
-            durationInFrames={item.durationInFrames}
-          />
-        )}
-      </InspectorSection>
-
-      {asset.hasAudioTrack ? (
-        <>
-          <InspectorDivider />
+    <div className="flex h-full flex-col gap-1">
+      <Button onClick={() => setItemSettings(!itemSettings)} variant="outline">
+        Edit
+      </Button>
+      <div className="bg-editor-starter-panel flex h-full flex-col gap-2 overflow-hidden rounded-3xl">
+        <div className="scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent overflow-y-auto">
+          {FEATURE_SOURCE_CONTROL && <SourceControls item={item} />}
           <InspectorSection>
-            <InspectorLabel>Audio</InspectorLabel>
-            {FEATURE_VOLUME_CONTROL && (
-              <VolumeControls
-                decibelAdjustment={item.decibelAdjustment}
+            <InspectorLabel>Layout</InspectorLabel>
+            {FEATURE_ALIGNMENT_CONTROL && (
+              <AlignmentControls itemId={item.id} />
+            )}
+            {FEATURE_POSITION_CONTROL && (
+              <PositionControl
+                left={item.left}
+                top={item.top}
                 itemId={item.id}
               />
             )}
-            {FEATURE_AUDIO_FADE_CONTROL && (
-              <AudioFadeControls
-                fadeInDuration={item.audioFadeInDurationInSeconds}
-                fadeOutDuration={item.audioFadeOutDurationInSeconds}
+            {FEATURE_DIMENSIONS_CONTROL && (
+              <DimensionsControls
+                itemId={item.id}
+                height={item.height}
+                width={item.width}
+              />
+            )}
+            {FEATURE_ROTATION_CONTROL && (
+              <RotationControl rotation={item.rotation} itemId={item.id} />
+            )}
+          </InspectorSection>
+          <InspectorDivider />
+          <InspectorSection>
+            <InspectorLabel>Fill</InspectorLabel>
+            {FEATURE_OPACITY_CONTROL && (
+              <OpacityControls opacity={item.opacity} itemId={item.id} />
+            )}
+            {FEATURE_BORDER_RADIUS_CONTROL && (
+              <BorderRadiusControl
+                borderRadius={item.borderRadius}
+                itemId={item.id}
+              />
+            )}
+          </InspectorSection>
+          <InspectorDivider />
+          <InspectorSection>
+            <InspectorLabel>Video</InspectorLabel>
+            {FEATURE_PLAYBACKRATE_CONTROL && (
+              <PlaybackRateControls
+                playbackRate={item.playbackRate}
+                itemId={item.id}
+                assetId={item.assetId}
+              />
+            )}
+            {FEATURE_VISUAL_FADE_CONTROL && (
+              <FadeControls
+                fadeInDuration={item.fadeInDurationInSeconds}
+                fadeOutDuration={item.fadeOutDurationInSeconds}
                 itemId={item.id}
                 durationInFrames={item.durationInFrames}
               />
             )}
           </InspectorSection>
-          <InspectorDivider />
-          <GenerateCaptionSection item={item} />
-        </>
-      ) : null}
+
+          {asset.hasAudioTrack ? (
+            <>
+              <InspectorDivider />
+              <InspectorSection>
+                <InspectorLabel>Audio</InspectorLabel>
+                {FEATURE_VOLUME_CONTROL && (
+                  <VolumeControls
+                    decibelAdjustment={item.decibelAdjustment}
+                    itemId={item.id}
+                  />
+                )}
+                {FEATURE_AUDIO_FADE_CONTROL && (
+                  <AudioFadeControls
+                    fadeInDuration={item.audioFadeInDurationInSeconds}
+                    fadeOutDuration={item.audioFadeOutDurationInSeconds}
+                    itemId={item.id}
+                    durationInFrames={item.durationInFrames}
+                  />
+                )}
+              </InspectorSection>
+              <InspectorDivider />
+              <GenerateCaptionSection item={item} />
+            </>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 };
