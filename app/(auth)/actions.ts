@@ -11,7 +11,6 @@ export const signUp = async (prevState: any, formData: FormData) => {
   }
   const email = formData.get("email") as string;
   const name = formData.get("name") as string;
-  console.log(name, email, password);
 
   const response = await auth.api.signUpEmail({
     returnHeaders: true,
