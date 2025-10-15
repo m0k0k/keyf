@@ -5,9 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { GOOGLE_FONTS_DATABASE } from "@/editor/data/google-fonts";
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     name: string;
-  };
+  }>;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
