@@ -25,7 +25,10 @@ export const MainComposition: React.FC<MainCompositionProps> = ({
     <AbsoluteFill>
       <Layers tracks={tracks} />
       {getRemotionEnvironment().isPlayer ? <SortedOutlines /> : null}
-      {isTimelineEmpty(tracks) ? <EmptyCanvasPlaceholder /> : null}
+
+      {getRemotionEnvironment().isPlayer && isTimelineEmpty(tracks) ? (
+        <EmptyCanvasPlaceholder />
+      ) : null}
       {editMode === "draw-solid" && playerRef ? (
         <SolidDrawingTool playerRef={playerRef} />
       ) : null}

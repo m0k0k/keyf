@@ -13,6 +13,8 @@ import {
   run,
   assetImage,
   DBAssetImage,
+  DBAssetVideo,
+  assetVideo,
 } from "./schema";
 import { ChatMessage } from "@/lib/ai/types";
 import { EditorState, UndoableState } from "@/editor/state/types";
@@ -68,6 +70,14 @@ export async function saveAssetImage({
   _assetImage: DBAssetImage;
 }) {
   return await db.insert(assetImage).values(_assetImage);
+}
+
+export async function saveAssetVideo({
+  _assetVideo,
+}: {
+  _assetVideo: DBAssetVideo;
+}) {
+  return await db.insert(assetVideo).values(_assetVideo);
 }
 
 export async function getContextById({ id }: { id: string }) {
@@ -364,4 +374,11 @@ export async function getImageAssetsByProjectId(projectId: string) {
     .select()
     .from(assetImage)
     .where(eq(assetImage.projectId, projectId));
+}
+
+export async function getVideoAssetsByProjectId(projectId: string) {
+  return await db
+    .select()
+    .from(assetVideo)
+    .where(eq(assetVideo.projectId, projectId));
 }

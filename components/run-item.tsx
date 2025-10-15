@@ -52,6 +52,11 @@ export function RunItem({
         }),
       });
       queryClient.invalidateQueries({
+        queryKey: trpc.asset.getVideoAssetsByDocumentId.queryKey({
+          documentId: documentId,
+        }),
+      });
+      queryClient.invalidateQueries({
         queryKey: trpc.generate.getRuns.queryKey(),
       });
       console.log("Run completed", run);

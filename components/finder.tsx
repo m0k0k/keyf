@@ -31,7 +31,11 @@ export function Finder({
       documentId: documentId,
     }),
   );
-
+  const { data: videoAssets } = useQuery(
+    trpc.asset.getVideoAssetsByDocumentId.queryOptions({
+      documentId: documentId,
+    }),
+  );
   const { data: runs } = useQuery(trpc.generate.getRuns.queryOptions());
 
   const mutation = useMutation(
@@ -41,22 +45,15 @@ export function Finder({
   // const { id: documentId } = useEditorId();
 
   return (
-    <div className="flex w-full max-w-[200px] flex-col gap-1 overflow-y-auto p-1">
+    <div className="flex h-full w-full max-w-[200px] flex-col gap-1 p-1">
       <div className="flex h-9 w-full flex-row items-center gap-1.5 rounded-xl border bg-[linear-gradient(135deg,_#000_0%,_#000_30%,_#a259ff_40%,_#ff6f3c_50%,_#1fa2ff_100%)] px-4 text-sm">
-        {/* bg-[linear-gradient(135deg,_#000_0%,_#000_30%,_#a259ff_40%,_#ff6f3c_50%,_#1fa2ff_100%)] */}
         <Image src="/logo-black.png" alt="Keyf" width={20} height={20} />
         <Link href="/app" className="font-corp font-valve tracking-tight">
           Keyf
         </Link>
-        {/* <p className="truncate px-2 text-xs text-neutral-700">
-          {" "}
-          Doc: {documentId}
-        </p> */}
-
-        {/* <p className="truncate px-2 text-xs text-neutral-900">{projectId}</p> */}
       </div>
 
-      <div className="bg-editor-starter-panel flex h-full w-full flex-col justify-between gap-1 rounded-3xl p-1">
+      <div className="bg-editor-starter-panel flex h-full w-full flex-col justify-between gap-1 overflow-y-auto rounded-3xl p-1">
         <div className="flex flex-row items-center justify-between">
           <h3 className="px-1 text-xs font-semibold text-neutral-300">
             Documents
@@ -143,61 +140,96 @@ export function Finder({
           </div>
         ))}
 
-        <div className="px-1 pt-4 pb-3 text-xs">
-          <h3 className="mb-2 text-xs font-semibold tracking-wide text-neutral-300">
-            Assets
+        <div className="my-2 p-1 text-xs">
+          <h3 className="text-xs font-semibold tracking-wide text-neutral-300">
+            Video Assets
           </h3>
-
-          <div className="scrollbar-thin grid grid-cols-1 gap-1 overflow-y-auto">
-            {assets?.map((asset) => (
-              <div
-                key={asset.id}
-                className="group flex items-center gap-3 rounded-md bg-neutral-950/80 px-1.5 py-1 shadow transition hover:bg-neutral-900"
-              >
-                <div className="flex-shrink-0">
-                  {asset.type === "image" && (
-                    <img
-                      src={asset.remoteUrl || ""}
-                      alt={asset.filename}
-                      width={24}
-                      height={24}
-                      className="aspect-square rounded border border-neutral-800 bg-neutral-900 object-cover shadow"
-                    />
-                  )}
-                  {asset.type === "video" && (
-                    <div className="relative h-14 w-14 overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900 shadow">
-                      <video
-                        src={asset.remoteUrl || ""}
-                        className="h-full w-full rounded-lg object-cover"
-                        muted
-                        playsInline
-                        preload="metadata"
-                      />
-                      <span className="absolute right-1 bottom-1 rounded bg-neutral-700/70 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow transition-colors group-hover:bg-purple-800/80">
-                        ▶
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="ml-1 flex min-w-0 flex-col">
-                  {/* <span className="truncate text-xs font-medium text-white">
-                    {asset.filename}
-                  </span> */}
-                  <span className="text-[11px] tracking-wide text-neutral-500 uppercase">
-                    {asset.type}
-                  </span>
-                </div>
-              </div>
-            ))}
-            {assets?.length === 0 && (
-              <div className="px-2 py-1 text-xs text-neutral-500 italic">
-                No assets found.
-              </div>
-            )}
-          </div>
         </div>
+        <div className="scrollbar-thin grid grid-cols-1 gap-1">
+          {videoAssets?.map((asset) => (
+            <div
+              key={asset.id}
+              className="group flex items-center gap-3 rounded-md bg-neutral-950/80 px-1.5 py-1 shadow transition hover:bg-neutral-900"
+            >
+              <div className="flex-shrink-0">
+                <video
+                  src={asset.remoteUrl || ""}
+                  className="h-14 w-14 rounded object-cover"
+                />
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  // Add asset and item to state
+                  setState({
+                    update: (state) => {
+                      const withItem = addItem({
+                        state,
+                        item: {
+                          type: "video",
+                          assetId: asset.id,
+                          durationInFrames: 100,
+                          from: 0,
+                          top: 0,
+                          left: 0,
+                          width: 1024,
+                          height: 1920,
+                          isDraggingInTimeline: false,
+                          id: asset.id, // data.id || "1",
+                          opacity: 1,
+                          borderRadius: 0,
+                          rotation: 0,
+                          keepAspectRatio: true,
+                          fadeInDurationInSeconds: 0,
+                          fadeOutDurationInSeconds: 0,
+                          videoStartFromInSeconds: 0,
+                          decibelAdjustment: 0,
+                          playbackRate: 1,
+                          audioFadeInDurationInSeconds: 0,
+                          audioFadeOutDurationInSeconds: 0,
+                        },
+                        select: true,
+                        position: { type: "front" },
+                      });
+                      const withAsset = addAssetToState({
+                        state: withItem,
+                        asset: {
+                          id: asset.id,
+                          type: "video",
+                          filename: "generated.mp4",
+                          width: 1024,
+                          height: 1920,
+                          size: 13213,
+                          remoteUrl: asset.remoteUrl,
+                          remoteFileKey: asset.id,
+                          mimeType: "video/mp4",
+                          durationInSeconds: asset.durationInSeconds,
+                          hasAudioTrack: asset.hasAudioTrack,
+                        },
+                      });
+                      return {
+                        ...withAsset,
+                        assetStatus: {
+                          ...state.assetStatus,
+                          [asset.id]: {
+                            type: "uploaded",
+                          },
+                        },
+                      };
+                    },
+                    commitToUndoStack: true,
+                  });
+                }}
+              >
+                +
+              </Button>
+            </div>
+          ))}
+        </div>
+
         <div className="mb-auto text-xs">
-          <h3 className="mb-2 text-xs font-semibold tracking-wide text-neutral-300">
+          <h3 className="mb-2 p-1 text-xs font-semibold tracking-wide text-neutral-300">
             Image Assets
           </h3>
 
@@ -302,6 +334,59 @@ export function Finder({
                   />
                 </div>
               ))}
+          </div>
+        </div>
+        <div className="px-1 pt-4 pb-3 text-xs">
+          <h3 className="mb-2 text-xs font-semibold tracking-wide text-neutral-300">
+            Uploads
+          </h3>
+
+          <div className="scrollbar-thin grid grid-cols-1 gap-1 overflow-y-auto">
+            {assets?.map((asset) => (
+              <div
+                key={asset.id}
+                className="group flex items-center gap-3 rounded-md bg-neutral-950/80 px-1.5 py-1 shadow transition hover:bg-neutral-900"
+              >
+                <div className="flex-shrink-0">
+                  {asset.type === "image" && (
+                    <img
+                      src={asset.remoteUrl || ""}
+                      alt={asset.filename}
+                      width={24}
+                      height={24}
+                      className="aspect-square rounded border border-neutral-800 bg-neutral-900 object-cover shadow"
+                    />
+                  )}
+                  {asset.type === "video" && (
+                    <div className="relative h-14 w-14 overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900 shadow">
+                      <video
+                        src={asset.remoteUrl || ""}
+                        className="h-full w-full rounded-lg object-cover"
+                        muted
+                        playsInline
+                        preload="metadata"
+                      />
+                      <span className="absolute right-1 bottom-1 rounded bg-neutral-700/70 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow transition-colors group-hover:bg-purple-800/80">
+                        ▶
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="ml-1 flex min-w-0 flex-col">
+                  {/* <span className="truncate text-xs font-medium text-white">
+                    {asset.filename}
+                  </span> */}
+                  <span className="text-[11px] tracking-wide text-neutral-500 uppercase">
+                    {asset.type}
+                  </span>
+                </div>
+              </div>
+            ))}
+            {assets?.length === 0 && (
+              <div className="px-2 py-1 text-xs text-neutral-500 italic">
+                No assets found.
+              </div>
+            )}
           </div>
         </div>
       </div>

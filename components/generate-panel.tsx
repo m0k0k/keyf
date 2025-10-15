@@ -21,12 +21,12 @@ export function GeneratePanel() {
   const [activeTab, setActiveTab] = useState<"video" | "draw">("video");
   const [duration, setDuration] = useState("4s");
   const [aspectRatio, setAspectRatio] = useState("16:9");
-  const [model, setModel] = useState("google/imagen4-fast");
+  const [model, setModel] = useState("sora-2-text-to-video");
   const [prompt, setPrompt] = useState("");
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const mutation = useMutation(
-    trpc.generate.kieImagen4.mutationOptions({
+    trpc.generate.kieSora2.mutationOptions({
       onSuccess: () => {
         // Invalidate related queries
         queryClient.invalidateQueries({
@@ -70,10 +70,7 @@ export function GeneratePanel() {
   const handleGenerate = () => {
     mutation.mutate({
       prompt,
-      model: model as
-        | "google/imagen4-fast"
-        | "google/imagen4-ultra"
-        | "google/imagen4",
+      model: model as "sora-2-text-to-video",
     });
   };
 
@@ -165,17 +162,21 @@ export function GeneratePanel() {
         <Select value={model} onValueChange={setModel}>
           <SelectTrigger className="h-12 w-full border-neutral-800 bg-neutral-950 text-white">
             <SelectValue>
-              <span className="flex items-center gap-2">Sora 2</span>
+              {model === "sora-2-text-to-video" ? (
+                <span className="flex items-center gap-2">Sora 2</span>
+              ) : model === "google/imagen4-fast" ? (
+                <span className="flex items-center gap-2">Imagen 4 Fast</span>
+              ) : (
+                <span className="flex items-center gap-2">{model}</span>
+              )}
             </SelectValue>
           </SelectTrigger>
           <SelectContent className="border-neutral-800 bg-neutral-950">
-            <SelectItem value="google/imagen4-fast" className="text-white">
-              <span className="flex items-center gap-2">
-                google/imagen4-fast
-              </span>
+            <SelectItem value="sora-2-text-to-video" className="text-white">
+              <span className="flex items-center gap-2">Sora 2</span>
             </SelectItem>
-            <SelectItem value="veo-3" className="text-white">
-              Veo 3
+            <SelectItem value="google/imagen4-fast" className="text-white">
+              Imagen 4 Fast
             </SelectItem>
           </SelectContent>
         </Select>

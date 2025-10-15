@@ -1,10 +1,12 @@
 import { defineConfig } from "@trigger.dev/sdk/v3";
+import { syncVercelEnvVars } from "@trigger.dev/build/extensions/core";
 
 export default defineConfig({
   project: "proj_jjkehyzpmtgbawpupazw",
   runtime: "node",
   build: {
     external: ["pg"],
+    extensions: [syncVercelEnvVars()],
   },
   logLevel: "log",
   // The max compute seconds a task is allowed to run. If the task run exceeds this duration, it will be stopped.

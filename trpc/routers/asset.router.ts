@@ -5,6 +5,7 @@ import {
   getAssetsByProjectId,
   getImageAssetsByProjectId,
   getProjectIdByDocumentId,
+  getVideoAssetsByProjectId,
   saveAsset,
 } from "@/lib/db/queries";
 export const assetRouter = createTRPCRouter({
@@ -127,6 +128,14 @@ export const assetRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const projectId = await getProjectIdByDocumentId(input.documentId);
       const assets = await getImageAssetsByProjectId(projectId);
+      return assets;
+    }),
+  getVideoAssetsByDocumentId: protectedProcedure
+    .input(z.object({ documentId: z.string() }))
+
+    .query(async ({ ctx, input }) => {
+      const projectId = await getProjectIdByDocumentId(input.documentId);
+      const assets = await getVideoAssetsByProjectId(projectId);
       return assets;
     }),
 });

@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { SignupForm } from "@/components/signup-form";
 
-export default function SignupPage() {
+import { LoginForm } from "@/components/login-form";
+
+export default function LoginPage() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-black p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -9,9 +10,9 @@ export default function SignupPage() {
           <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
             <Image src="/logo-black.png" alt="logo" width={24} height={24} />
           </div>
-          Keyf
+          <span className="font-corp font-valve tracking-tight">Keyf</span>
         </a>
-        <SignupForm />
+        <LoginForm />
       </div>
     </div>
   );

@@ -39,7 +39,7 @@ export const Brands = () => {
         {brands?.map((brand: any) => (
           <tr key={brand.id} className="bg-accent m-2 rounded-lg shadow-md">
             <td className="border-b p-1.5 text-left">
-              <a href={`/context/${brand.id}`}>{brand.name}</a>
+              <a href={`/app/${brand.id}`}>{brand.name}</a>
             </td>
 
             <td className="border-b p-1.5 text-left">{brand.id}</td>

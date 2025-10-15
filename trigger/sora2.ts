@@ -3,11 +3,11 @@ import { delay } from "@/lib/delay";
 import { put } from "@vercel/blob";
 import { generateRandomId } from "@/editor/utils/generate-random-id";
 import imageSize from "image-size";
-import { saveAssetImage, updateRun } from "@/lib/db/queries";
+import { saveAssetImage, saveAssetVideo, updateRun } from "@/lib/db/queries";
 
-export const imagen4 = task({
+export const sora2 = task({
   //1. Use a unique id for each task
-  id: "imagen4",
+  id: "sora2",
   queue: {
     concurrencyLimit: 1,
   },
@@ -21,10 +21,8 @@ export const imagen4 = task({
       userId: string;
       model: string;
       prompt: string;
-      negativePrompt: string;
       aspectRatio: string;
-      num_images: string;
-      seed: number;
+      remove_watermark: boolean;
     },
     { ctx },
   ) => {
@@ -34,10 +32,11 @@ export const imagen4 = task({
     // await wait.for({ seconds: 30 });
     console.log(payload);
     const resp = await kieApi().postJSON<any>("/api/v1/jobs/createTask", {
-      model: "google/imagen4-fast",
+      model: payload.model,
       input: {
         prompt: payload.prompt,
-        aspect_ratio: "9:16",
+        aspect_ratio: payload.aspectRatio,
+        remove_watermark: payload.remove_watermark,
       },
     });
     if (resp.code !== 200) {
@@ -54,31 +53,26 @@ export const imagen4 = task({
         break;
       }
       console.log("data", data);
-      await delay(1000);
+      await delay(10000);
     }
 
     const assetId = generateRandomId();
-    const imageUrl = JSON.parse(data.data.resultJson).resultUrls[0];
+    const videoUrl = JSON.parse(data.data.resultJson).resultUrls[0];
 
-    const response = await fetch(imageUrl);
+    // "resultJson": "{\"resultUrls\":[\"https://example.com/generated-image.jpg\"],\"resultWaterMarkUrls\":[\"https://example.com/generated-watermark-image.jpg\"]}",
+
+    // save video from url to blob
+    const response = await fetch(videoUrl);
     const file = await response.blob();
 
-    const buf = Buffer.from(await file.arrayBuffer());
-
-    const dimensions = imageSize(buf);
-
-    // const image = sharp(buf);
-    // const metadata = await image.metadata();
-    // const { width, height } = metadata;
-    //
-    const { url } = await put("generated.png", file, {
+    const { url } = await put("generated.mp4", file, {
       access: "public",
-      contentType: "image/png",
+      contentType: "video/mp4",
       addRandomSuffix: true,
     });
 
-    await saveAssetImage({
-      _assetImage: {
+    await saveAssetVideo({
+      _assetVideo: {
         createdAt: new Date(),
         updatedAt: new Date(),
         filename: `generated.png`,
@@ -90,6 +84,8 @@ export const imagen4 = task({
         id: assetId,
         width: 1000,
         height: 1000,
+        durationInSeconds: 10,
+        hasAudioTrack: true,
         documentId: "0db96e38-8605-4fd4-a5ea-f089566c67fe",
         projectId: "4bb27a9c-a3ec-442b-90ad-269a99394e67",
         userId: payload.userId,

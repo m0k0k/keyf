@@ -165,6 +165,41 @@ export const assetImage = pgTable(
 );
 export type DBAssetImage = InferSelectModel<typeof assetImage>;
 
+export const assetVideo = pgTable(
+  "AssetVideo",
+  {
+    id: text("id").notNull(),
+    createdAt: timestamp("createdAt").notNull(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+    filename: text("filename").notNull(),
+    size: integer("size").notNull(),
+    remoteUrl: text("remoteUrl"),
+    remoteFileKey: text("remoteFileKey"),
+    mimeType: text("mimeType").notNull(),
+    type: varchar("type", {
+      enum: ["image", "video", "gif", "audio", "caption"],
+    }).notNull(),
+
+    width: integer("width").notNull(),
+    height: integer("height").notNull(),
+    durationInSeconds: integer("durationInSeconds").notNull(),
+    hasAudioTrack: boolean("hasAudioTrack").notNull().default(false),
+    documentId: text("documentId"),
+    projectId: text("projectId")
+      .notNull()
+      .references(() => project.id, { onDelete: "cascade" }),
+    userId: text("userId")
+      .notNull()
+      .references(() => user.id),
+    visibility: varchar("visibility", { enum: ["public", "private"] })
+      .notNull()
+      .default("private"),
+    isPinned: boolean("isPinned").notNull().default(false),
+  },
+  (table) => [primaryKey({ columns: [table.id, table.createdAt] })],
+);
+export type DBAssetVideo = InferSelectModel<typeof assetVideo>;
+
 export const chat = pgTable("Chat", {
   id: text("id").primaryKey(),
   createdAt: timestamp("createdAt").notNull(),
