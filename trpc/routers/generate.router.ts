@@ -1,4 +1,8 @@
-import { getRunsByUserId, saveRun } from "@/lib/db/queries";
+import {
+  getProjectIdByDocumentId,
+  getRunsByUserId,
+  saveRun,
+} from "@/lib/db/queries";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { z } from "zod";
 
@@ -41,6 +45,7 @@ export const generateRouter = createTRPCRouter({
   kieSora2: protectedProcedure
     .input(
       z.object({
+        documentId: z.string(),
         model: z.enum(["sora-2-text-to-video"]),
         prompt: z.string().max(5000),
         aspectRatio: z.enum(["portrait", "landscape"]).optional(),
@@ -48,7 +53,10 @@ export const generateRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const projectId = await getProjectIdByDocumentId(input.documentId);
       const handle = await sora2.trigger({
+        projectId: projectId,
+        documentId: input.documentId,
         userId: ctx.user.id,
         model: input.model,
         prompt: input.prompt,

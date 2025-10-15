@@ -16,6 +16,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/react";
 import { toast } from "sonner";
 import { Spinner } from "./ui/spinner";
+import { useDocumentId } from "@/providers/document-id-provider";
 
 export function GeneratePanel() {
   const [activeTab, setActiveTab] = useState<"video" | "draw">("video");
@@ -25,6 +26,7 @@ export function GeneratePanel() {
   const [prompt, setPrompt] = useState("");
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const { id: documentId } = useDocumentId();
   const mutation = useMutation(
     trpc.generate.kieSora2.mutationOptions({
       onSuccess: () => {
@@ -71,6 +73,7 @@ export function GeneratePanel() {
     mutation.mutate({
       prompt,
       model: model as "sora-2-text-to-video",
+      documentId: documentId,
     });
   };
 

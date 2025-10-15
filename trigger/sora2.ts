@@ -18,6 +18,8 @@ export const sora2 = task({
   //2. The run function is the main function of the task
   run: async (
     payload: {
+      projectId: string;
+      documentId: string;
       userId: string;
       model: string;
       prompt: string;
@@ -86,8 +88,8 @@ export const sora2 = task({
         height: 1000,
         durationInSeconds: 10,
         hasAudioTrack: true,
-        documentId: "0db96e38-8605-4fd4-a5ea-f089566c67fe",
-        projectId: "4bb27a9c-a3ec-442b-90ad-269a99394e67",
+        documentId: payload.documentId,
+        projectId: payload.projectId,
         userId: payload.userId,
         visibility: "private",
         isPinned: false,
