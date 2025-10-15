@@ -18,7 +18,7 @@ import { hasAssetsWithErrors } from "../utils/asset-status-utils";
 import { clsx } from "../utils/clsx";
 import { hasUploadingAssets } from "../utils/upload-status";
 import { useEditorId, useFullState } from "../utils/use-context";
-import { useTRPC } from "@/trpc/react";
+import { useTRPC } from "../../trpc/react";
 import { useMutation } from "@tanstack/react-query";
 import { useDocumentId } from "@/providers/document-id-provider";
 import equal from "fast-deep-equal";

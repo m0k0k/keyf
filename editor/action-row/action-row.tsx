@@ -84,8 +84,9 @@ export const ActionRow: React.FC<{
             <div className="px-2 text-sm font-medium">{title}</div>
           </Link> */}
           {FEATURE_CANVAS_ZOOM_CONTROLS ? <CanvasZoomControls /> : null}
+          <TasksIndicator />
         </div>
-        <TasksIndicator />
+
         {/* <div className="flex-1"></div> */}
       </div>
     </div>

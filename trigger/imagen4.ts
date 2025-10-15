@@ -1,15 +1,9 @@
 import { task, wait } from "@trigger.dev/sdk";
 import { delay } from "@/lib/delay";
-import { createCaller } from "@/trpc/routers/_app";
-import { createTRPCContext } from "@/trpc/init";
+import sharp from "sharp";
+import { put } from "@vercel/blob";
 import { generateRandomId } from "@/editor/utils/generate-random-id";
-import {
-  saveAsset,
-  saveAssetImage,
-  saveRun,
-  updateRun,
-} from "@/lib/db/queries";
-import { DBAsset } from "@/lib/db/schema";
+import { saveAssetImage, updateRun } from "@/lib/db/queries";
 
 export const imagen4 = task({
   //1. Use a unique id for each task
@@ -17,6 +11,10 @@ export const imagen4 = task({
   queue: {
     concurrencyLimit: 1,
   },
+  retry: {
+    maxAttempts: 1,
+  },
+
   //2. The run function is the main function of the task
   run: async (
     payload: {
@@ -47,9 +45,6 @@ export const imagen4 = task({
     }
     const taskId = resp.data.taskId;
 
-    // const resp = await kieApi().getJSON<any>(
-    //   `/api/v1/jobs/recordInfo?taskId=${taskId}`,
-    // );
     let data;
     while (true) {
       data = await kieApi().getJSON<any>(
@@ -65,19 +60,34 @@ export const imagen4 = task({
     const assetId = generateRandomId();
     const imageUrl = JSON.parse(data.data.resultJson).resultUrls[0];
 
+    const response = await fetch(imageUrl);
+    const file = await response.blob();
+
+    const buf = Buffer.from(await file.arrayBuffer());
+
+    const image = sharp(buf);
+    const metadata = await image.metadata();
+    const { width, height } = metadata;
+    //
+    const { url } = await put("generated.png", file, {
+      access: "public",
+      contentType: "image/png",
+      addRandomSuffix: true,
+    });
+
     await saveAssetImage({
       _assetImage: {
         createdAt: new Date(),
         updatedAt: new Date(),
         filename: `generated.png`,
         size: 0,
-        remoteUrl: imageUrl,
+        remoteUrl: url,
         remoteFileKey: assetId,
         mimeType: "image/png",
         type: "image",
         id: assetId,
-        width: 1024,
-        height: 1024,
+        width: width,
+        height: height,
         documentId: "0db96e38-8605-4fd4-a5ea-f089566c67fe",
         projectId: "4bb27a9c-a3ec-442b-90ad-269a99394e67",
         userId: payload.userId,

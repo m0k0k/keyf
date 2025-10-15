@@ -16,7 +16,7 @@ import { VideoIcon } from "../icons/video";
 import { useCurrentStateAsRef, useWriteContext } from "../utils/use-context";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useTRPC } from "@/trpc/react";
+import { useTRPC } from "../../trpc/react";
 import { useEditorId } from "../utils/use-context";
 import { IconParkSolidPreviewOpen } from "@/components/icon";
 
@@ -104,7 +104,7 @@ export const ToolSelection: React.FC<{
         className="hidden"
         multiple
       />
-      <div className="ml-2 flex overflow-hidden">
+      <div className="ml-0 flex overflow-hidden">
         <button
           data-active={editMode === "preview"}
           className="editor-starter-focus-ring flex h-10 w-10 items-center justify-center text-white transition-colors hover:bg-white/10"

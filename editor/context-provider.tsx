@@ -34,8 +34,6 @@ import { createAssetStatusFromUndoableState } from "./utils/asset-status-utils";
 import { getCompositionDuration } from "./utils/get-composition-duration";
 import { TimelineZoomProvider } from "./utils/timeline-zoom-provider";
 import { useUndoRedo } from "./utils/undo-redo";
-import { useTRPC } from "@/trpc/react";
-import { useSuspenseQuery } from "@tanstack/react-query";
 
 export type SetState = (options: {
   update: EditorState | ((state: EditorState) => EditorState);
@@ -157,11 +155,6 @@ export const ContextProvider = ({
   const [state, setStateWithoutHistory] = useState<EditorState>(() =>
     getInitialState(),
   );
-  // const trpc = useTRPC();
-
-  // const { data: editor } = useSuspenseQuery(
-  //   trpc.editor.get.queryOptions({ id }),
-  // );
 
   const imperativeState = useRef(state);
   imperativeState.current = state;

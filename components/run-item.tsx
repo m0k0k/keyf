@@ -54,6 +54,7 @@ export function RunItem({
       queryClient.invalidateQueries({
         queryKey: trpc.generate.getRuns.queryKey(),
       });
+      console.log("Run completed", run);
     }
   }, [run]);
 

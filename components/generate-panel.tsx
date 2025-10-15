@@ -78,7 +78,7 @@ export function GeneratePanel() {
   };
 
   return (
-    <div className="flex h-full flex-col gap-4 p-1.5 text-white">
+    <div className="flex flex-col gap-4 p-1.5 text-white">
       {/* Tabs */}
       <div className="flex gap-0 border-b border-neutral-800">
         <button

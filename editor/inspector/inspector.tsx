@@ -26,13 +26,7 @@ export const Inspector: React.FC = () => {
 
   return (
     <div className="flex h-full flex-col gap-1 pt-1">
-      <UserCard />
-
-      <div
-        className="bg-editor-starter-panel h-full w-full overflow-y-auto rounded-3xl"
-        style={style}
-        ref={ref}
-      >
+      <div className="flex h-full flex-col" style={style} ref={ref}>
         {selectedItems.length > 1 ? null : selectedItems.length === 1 ? (
           <InspectorContent itemId={selectedItems[0]} />
         ) : initialized ? (

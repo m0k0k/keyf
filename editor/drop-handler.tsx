@@ -15,9 +15,8 @@ import {
   useEditorId,
   useWriteContext,
 } from "./utils/use-context";
-import { useTRPC } from "@/trpc/react";
+import { useTRPC } from "../trpc/react";
 import { useMutation } from "@tanstack/react-query";
-import { EditorStarterAsset } from "./assets/assets";
 import { toast } from "sonner";
 
 export const DropHandler: React.FC<{

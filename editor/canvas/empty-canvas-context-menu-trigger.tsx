@@ -29,7 +29,7 @@ import {
 } from "../utils/use-context";
 import { CanvasSizeContext } from "./canvas-size";
 import { useMutation } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/react";
+import { useTRPC } from "../../trpc/react";
 
 export const EmptyCanvasContextMenuTrigger: React.FC<{
   children: React.ReactNode;

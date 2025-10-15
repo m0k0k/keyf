@@ -22,7 +22,7 @@ import {
 } from "../utils/use-context";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useTRPC } from "@/trpc/react";
+import { useTRPC } from "../../trpc/react";
 
 export const CopyPasteLayers: React.FC<{
   playerRef: React.RefObject<PlayerRef | null>;

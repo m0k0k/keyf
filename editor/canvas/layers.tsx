@@ -4,7 +4,7 @@ import { Layer } from "../items/layer";
 import { TrackType } from "../state/types";
 import { useForbidScroll } from "../utils/forbid-scroll";
 import { EditModeContext } from "../edit-mode";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 // const layerWrapperStyle: React.CSSProperties = {
 //   overflow: "hidden", // hidden for canvas frame visibility

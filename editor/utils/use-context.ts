@@ -21,7 +21,6 @@ import {
   TracksContext,
   TimelineWriteOnlyContext as WriteOnlyContext,
   EditorIdContext,
-  ChatVisibleContext,
 } from "../context-provider";
 import { EditorStarterItem } from "../items/item-type";
 import { findAssetById } from "./find-asset-by-id";

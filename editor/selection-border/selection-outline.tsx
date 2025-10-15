@@ -31,7 +31,7 @@ import { SelectionDimensions } from "./selection-dimensions";
 import { SelectionError } from "./selection-upload-error";
 import { SelectionUploadProgress } from "./selection-upload-progress";
 import { useMutation } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/react";
+import { useTRPC } from "../../trpc/react";
 import { toast } from "sonner";
 
 const AXIS_LOCK_THRESHOLD = 10; // Minimum movement to determine axis

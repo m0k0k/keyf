@@ -41,7 +41,7 @@ export function Finder({
   // const { id: documentId } = useEditorId();
 
   return (
-    <div className="flex w-full max-w-[200px] flex-col gap-1 p-1">
+    <div className="flex w-full max-w-[200px] flex-col gap-1 overflow-y-auto p-1">
       <div className="flex h-9 w-full flex-row items-center gap-1.5 rounded-xl border bg-[linear-gradient(135deg,_#000_0%,_#000_30%,_#a259ff_40%,_#ff6f3c_50%,_#1fa2ff_100%)] px-4 text-sm">
         {/* bg-[linear-gradient(135deg,_#000_0%,_#000_30%,_#a259ff_40%,_#ff6f3c_50%,_#1fa2ff_100%)] */}
         <Image src="/logo-black.png" alt="Keyf" width={20} height={20} />

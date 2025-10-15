@@ -112,4 +112,4 @@ export const FEATURE_CAPTIONING = true;
 
 // Rendering
 export const FEATURE_RENDERING = true;
-export const FEATURE_RENDERING_CODEC_SELECTOR = true;
+export const FEATURE_RENDERING_CODEC_SELECTOR = false;
