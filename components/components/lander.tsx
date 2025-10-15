@@ -3,39 +3,33 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { ArrowRightIcon } from "lucide-react";
 
 export function Lander() {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <>
-      <div className="mx-auto flex max-w-3xl flex-col items-center justify-start p-8">
+      <div className="mx-auto flex max-w-2xl flex-col items-center justify-start p-8">
         <h1 className="z-50 w-[100%] pt-20 text-center text-5xl leading-tight font-extralight">
-          Boost your{" "}
-          <span className="font-corp-extended font-normal italic">ROAS</span>{" "}
-          with fine-tuned{" "}
-          <span className="font-corp-extended font-normal">AI-UGC</span>{" "}
-          <span className="font-extralight"> that converts.</span>
+          <span className="font-normal">Scale your </span> campaigns with{" "}
+          <span className="bg-[linear-gradient(135deg,_#a259ff_00%,_#ff6f3c_50%,_#1fa2ff_100%)] bg-clip-text font-normal text-transparent">
+            creatives
+          </span>{" "}
+          powered by AI.
         </h1>
-        <h2 className="w-[90%] pt-4 text-center text-2xl font-extralight tracking-tight">
-          Powered by{" "}
-          <span className="bg-gradient-to-r from-neutral-200 via-neutral-200 to-neutral-200 bg-clip-text font-normal text-transparent">
-            AI agents
-          </span>
+        <h2 className="w-[90%] pt-4 text-center text-lg font-extralight tracking-tight">
           <span className="font-extralight">
-            {" "}
-            tailored to{" "}
-            <span className="font-normal underline underline-offset-2">
-              your brand.
-            </span>
+            The AI Video Generator made for marketers.{" "}
           </span>
         </h2>
         <div className="mt-8 mb-8 flex w-full flex-col items-center justify-start gap-4">
           <Link href="/app">
             <Button
-              variant="secondary"
-              className="w-full rounded-full px-6 py-5 text-lg font-light text-white"
+              variant="outline"
+              className="w-full rounded-full px-8 py-5 text-lg font-light text-white"
             >
-              Generate AI Video
+              Get started now
+              <ArrowRightIcon className="size-4" />
             </Button>
           </Link>
         </div>
