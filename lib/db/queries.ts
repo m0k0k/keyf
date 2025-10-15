@@ -53,15 +53,15 @@ export async function getRunsByUserId({ userId }: { userId: string }) {
   return await db.select().from(run).where(eq(run.userId, userId));
 }
 
-// export async function updateRun({
-//   id,
-//   status,
-// }: {
-//   id: string;
-//   status: "queued" | "running" | "completed" | "failed";
-// }) {
-//   return await db.update(run).set({ status }).where(eq(run.id, id));
-// }
+export async function updateRun({
+  id,
+  status,
+}: {
+  id: string;
+  status: "queued" | "running" | "completed" | "failed";
+}) {
+  return await db.update(run).set({ status }).where(eq(run.id, id));
+}
 export async function saveAssetImage({
   _assetImage,
 }: {

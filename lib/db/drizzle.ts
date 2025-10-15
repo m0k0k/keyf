@@ -9,5 +9,5 @@ config({ path: ".env" }); // or .env.local
 //   ? neonDrizzle(process.env.DATABASE_URL!)
 //   : pgDrizzle(process.env.DATABASE_URL!);
 
-// export const db = pgDrizzle(process.env.DATABASE_URL!);
-export const db = neonDrizzle(process.env.DATABASE_URL!);
+export const db = pgDrizzle(process.env.DATABASE_URL!);
+// export const db = neonDrizzle(process.env.DATABASE_URL!);
