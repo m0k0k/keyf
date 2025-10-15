@@ -1,10 +1,25 @@
 import { task, wait } from "@trigger.dev/sdk";
 import { delay } from "@/lib/delay";
-// import sharp from "sharp";
+
 import { put } from "@vercel/blob";
 import { generateRandomId } from "@/editor/utils/generate-random-id";
-import { saveAssetImage, updateRun } from "@/lib/db/queries";
+
 import imageSize from "image-size";
+import { config } from "dotenv";
+
+import { drizzle as pgDrizzle } from "drizzle-orm/node-postgres";
+
+config({ path: ".env" }); // or .env.local
+
+// const isProduction = process.env.NODE_ENV === "production";
+// export const db = isProduction
+//   ? neonDrizzle(process.env.DATABASE_URL!)
+//   : pgDrizzle(process.env.DATABASE_URL!);
+
+// export const db = pgDrizzle(process.env.DATABASE_URL!);
+export const db = pgDrizzle(process.env.DATABASE_URL!);
+import { eq, desc, asc, gte } from "drizzle-orm";
+import { run } from "@/lib/db/schema";
 
 export const imagen4 = task({
   //1. Use a unique id for each task
@@ -78,35 +93,53 @@ export const imagen4 = task({
       addRandomSuffix: true,
     });
 
-    await saveAssetImage({
-      _assetImage: {
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        filename: `generated.png`,
-        size: 0,
-        remoteUrl: url,
-        remoteFileKey: assetId,
-        mimeType: "image/png",
-        type: "image",
-        id: assetId,
-        width: dimensions.width || 1000,
-        height: dimensions.height || 1000,
-        documentId: "0db96e38-8605-4fd4-a5ea-f089566c67fe",
-        projectId: "4bb27a9c-a3ec-442b-90ad-269a99394e67",
-        userId: payload.userId,
-        visibility: "private",
-        isPinned: false,
-      },
-    });
+    // await saveAssetImage({
+    //   _assetImage: {
+    //     createdAt: new Date(),
+    //     updatedAt: new Date(),
+    //     filename: `generated.png`,
+    //     size: 0,
+    //     remoteUrl: url,
+    //     remoteFileKey: assetId,
+    //     mimeType: "image/png",
+    //     type: "image",
+    //     id: assetId,
+    //     width: 1000,
+    //     height: 1000,
+    //     documentId: "0db96e38-8605-4fd4-a5ea-f089566c67fe",
+    //     projectId: "4bb27a9c-a3ec-442b-90ad-269a99394e67",
+    //     userId: payload.userId,
+    //     visibility: "private",
+    //     isPinned: false,
+    //   },
+    // });
 
-    await updateRun({
-      id: id,
-      status: "completed",
-    });
+    try {
+      await updateRun({
+        id: id,
+        status: "completed",
+      });
+    } catch (error) {
+      await updateRun({
+        id: id,
+        status: "failed",
+      });
+      console.error("Error updating run", error);
+    }
 
-    return data;
+    return taskId;
   },
 });
+
+async function updateRun({
+  id,
+  status,
+}: {
+  id: string;
+  status: "queued" | "running" | "completed" | "failed";
+}) {
+  return await db.update(run).set({ status }).where(eq(run.id, id));
+}
 
 function kieApi() {
   const base = "https://api.kie.ai";
