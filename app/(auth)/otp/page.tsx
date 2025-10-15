@@ -2,11 +2,14 @@ import { OTPForm } from "@/components/otp-form";
 import Image from "next/image";
 
 export default async function OTPPage({
-  params,
+  searchParams,
 }: {
-  params: Promise<{ email: string }>;
+  searchParams: Promise<{ email: string }>;
 }) {
-  const { email } = await params;
+  const { email } = await searchParams;
+  if (!email) {
+    return <div>No email provided</div>;
+  }
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-black p-6 md:p-10">
       <div className="flex w-full max-w-xs flex-col gap-6">

@@ -22,6 +22,7 @@ import Form from "next/form";
 import { verifyEmailOTP } from "@/app/(auth)/actions";
 import { useActionState } from "react";
 import { Input } from "@/components/ui/input";
+
 export function OTPForm({
   email,
   ...props
@@ -47,7 +48,7 @@ export function OTPForm({
               <FieldLabel htmlFor="otp" className="sr-only">
                 Verification code
               </FieldLabel>
-              <Input type="hidden" name="email" value={email || ""} />
+              <Input type="hidden" name="email" value={email} />
               <InputOTP maxLength={6} id="otp" name="otp" required>
                 <InputOTPGroup className="gap-2.5 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border">
                   <InputOTPSlot index={0} />
