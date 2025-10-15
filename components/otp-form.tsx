@@ -21,9 +21,11 @@ import {
 import Form from "next/form";
 import { verifyEmailOTP } from "@/app/(auth)/actions";
 import { useActionState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
-export function OTPForm({ ...props }: React.ComponentProps<typeof Card>) {
+export function OTPForm({
+  email,
+  ...props
+}: React.ComponentProps<typeof Card> & { email: string }) {
   const initialState = {
     error: "",
   };
@@ -32,8 +34,6 @@ export function OTPForm({ ...props }: React.ComponentProps<typeof Card>) {
     initialState,
   );
 
-  const pathname = usePathname();
-  const email = pathname.split("?")[1].split("=")[1];
   return (
     <Card {...props}>
       <CardHeader className="text-center">
