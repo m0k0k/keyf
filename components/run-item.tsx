@@ -68,7 +68,32 @@ export function RunItem({
   return (
     <div className="flex h-6 flex-row items-center gap-5 truncate px-1 text-xs text-neutral-200">
       {/* {run?.status} -{run?.id} */}
-      <Spinner /> Generating...
+      {run?.status === "COMPLETED" ? (
+        <span className="text-green-500">Completed</span>
+      ) : run?.status === "FAILED" ? (
+        <span className="text-red-500">Failed</span>
+      ) : run?.status === "QUEUED" ? (
+        <>
+          <Spinner /> Generating...
+        </>
+      ) : run?.status === "PENDING_VERSION" ? (
+        <>
+          <Spinner /> Generating...
+        </>
+      ) : run?.status === "DEQUEUED" ? (
+        <>
+          <Spinner /> Generating...
+        </>
+      ) : run?.status === "EXECUTING" ? (
+        <>
+          <Spinner /> Generating...
+        </>
+      ) : (
+        <>
+          {" "}
+          <Spinner /> Generating...
+        </>
+      )}
     </div>
   );
 }
