@@ -65,7 +65,7 @@ export const sora2 = task({
     const response = await fetch(videoUrl);
     const file = await response.blob();
 
-    const { url } = await put("generated.mp4", file, {
+    const { url } = await put("keyf/files/generated.mp4", file, {
       access: "public",
       contentType: "video/mp4",
       addRandomSuffix: true,
@@ -75,12 +75,12 @@ export const sora2 = task({
       _assetVideo: {
         createdAt: new Date(),
         updatedAt: new Date(),
-        filename: `generated.png`,
+        filename: `generated.mp4`,
         size: 0,
         remoteUrl: url,
         remoteFileKey: assetId,
-        mimeType: "image/png",
-        type: "image",
+        mimeType: "video/mp4",
+        type: "video",
         id: assetId,
         width: 1000,
         height: 1000,

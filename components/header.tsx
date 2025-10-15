@@ -5,8 +5,8 @@ export function Header() {
   return (
     <nav className="flex items-center justify-between gap-6 py-4">
       <div className="flex flex-row items-center gap-2">
-        <Link href="/context" className="text-lg hover:underline">
-          Context
+        <Link href="/app" className="text-lg hover:underline">
+          App
         </Link>
         <Link href="/dashboard" className="text-lg hover:underline">
           Dashboard
