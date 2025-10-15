@@ -4,6 +4,7 @@ import { delay } from "@/lib/delay";
 import { put } from "@vercel/blob";
 import { generateRandomId } from "@/editor/utils/generate-random-id";
 import { saveAssetImage, updateRun } from "@/lib/db/queries";
+import imageSize from "image-size";
 
 export const imagen4 = task({
   //1. Use a unique id for each task
@@ -65,6 +66,8 @@ export const imagen4 = task({
 
     const buf = Buffer.from(await file.arrayBuffer());
 
+    const dimensions = imageSize(buf);
+
     // const image = sharp(buf);
     // const metadata = await image.metadata();
     // const { width, height } = metadata;
@@ -86,8 +89,8 @@ export const imagen4 = task({
         mimeType: "image/png",
         type: "image",
         id: assetId,
-        width: 1000,
-        height: 1000,
+        width: dimensions.width || 1000,
+        height: dimensions.height || 1000,
         documentId: "0db96e38-8605-4fd4-a5ea-f089566c67fe",
         projectId: "4bb27a9c-a3ec-442b-90ad-269a99394e67",
         userId: payload.userId,
