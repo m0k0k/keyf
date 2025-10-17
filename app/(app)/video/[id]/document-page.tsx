@@ -49,12 +49,12 @@ export function DocumentPage({ id }: { id: string }) {
       >
         {/* <Finder projectId={project.id} documents={documents} /> */}
         <Editor />
-        {/* <Chat
+        <Chat
           id={document[0].projectId}
           chats={chats}
           initialMessages={[]}
           playerRef={playerRef}
-        /> */}
+        />
       </ContextProvider>
     </div>
   );
