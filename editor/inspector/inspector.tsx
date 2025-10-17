@@ -7,7 +7,7 @@ import { InspectorContent } from "./inspector-content";
 import { useInspectorScrollRestoration } from "./scroll-restoration";
 import { UserCard } from "@/components/components/user-card";
 
-export const INSPECTOR_WIDTH = 200;
+export const INSPECTOR_WIDTH = 230;
 
 export const Inspector: React.FC = () => {
   const { selectedItems } = useSelectedItems();

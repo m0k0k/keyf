@@ -37,23 +37,23 @@ export const Editor: React.FC = () => {
               "rounded-2xl",
               editMode === "preview"
                 ? "bg-editor-starter-bg"
-                : "bg-neutral-950",
+                : "bg-editor-starter-bg",
             )}
           />
         </PreviewSizeProvider>
 
-        <div
+        {/* <div
           className={
             editMode === "preview"
               ? "flex h-0 w-full opacity-0"
               : "flex w-full flex-col"
           }
-        >
-          {FEATURE_RESIZE_TIMELINE_PANEL && <TimelineResizer />}
-          <TimelineContainer playerRef={playerRef}>
-            <Timeline playerRef={playerRef} />
-          </TimelineContainer>
-        </div>
+        > */}
+        {FEATURE_RESIZE_TIMELINE_PANEL && <TimelineResizer />}
+        <TimelineContainer playerRef={playerRef}>
+          <Timeline playerRef={playerRef} />
+        </TimelineContainer>
+        {/* </div> */}
       </WaitForInitialized>
       <ForceSpecificCursor />
       <DownloadRemoteAssets />

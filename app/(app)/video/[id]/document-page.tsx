@@ -37,7 +37,7 @@ export function DocumentPage({ id }: { id: string }) {
   const playerRef = useRef<PlayerRef | null>(null);
 
   return (
-    <div className="flex h-full w-full flex-row gap-0">
+    <div className="flex h-full w-full flex-row gap-0 p-1.5">
       <header className="absolute top-0 z-50 flex h-11 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />

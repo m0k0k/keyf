@@ -75,8 +75,8 @@ export default function Chat({
 
   return (
     <>
-      <div className="flex h-dvh max-w-[300px] min-w-[300px] flex-1 p-1 pl-0">
-        <div className="bg-editor-starter-panel flex h-full w-full flex-col rounded-3xl transition-all duration-700 ease-in-out">
+      <div className="flex h-full max-w-[300px] min-w-[300px] flex-1 p-1 pl-0">
+        <div className="flex h-full w-full flex-col rounded-3xl transition-all duration-700 ease-in-out [background:linear-gradient(135deg,_#a259ff_0%,_#000_35%,_#a259ff_35%,_#ff6f3c_50%,_#212121_100%)]">
           {/* [background:linear-gradient(135deg,_#a259ff_0%,_#000_35%,_#a259ff_35%,_#ff6f3c_50%,_#212121_100%)] */}
           {/* Chat Header */}
 

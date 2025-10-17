@@ -27,12 +27,17 @@ export const SourceControls: React.FC<{
         <InspectorLabel>Source</InspectorLabel>
         <div className="text-xs leading-relaxed text-neutral-300">
           <div>{asset.filename}</div>
-          <img
-            src={asset.remoteUrl || ""}
-            alt={asset.filename}
-            width={100}
-            height={100}
-          />
+          {asset.type === "image" && (
+            <img
+              src={asset.remoteUrl || ""}
+              alt={asset.filename}
+              width={100}
+              height={100}
+            />
+          )}
+          {asset.type === "video" && (
+            <video src={asset.remoteUrl || ""} width={100} height={100} />
+          )}
           {asset.type === "image" && (
             <div>
               Width: {asset?.width}

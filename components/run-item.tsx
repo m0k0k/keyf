@@ -8,6 +8,10 @@ import { usePageId } from "@/providers/page-id-provider";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { Spinner } from "./ui/spinner";
+import { ImageAsset } from "@/editor/assets/assets";
+import { addItem } from "@/editor/state/actions/add-item";
+import { addAssetToState } from "@/editor/state/actions/add-asset-to-state";
+import { useWriteContext } from "@/editor/utils/use-context";
 export function RunItem({
   runId,
   publicAccessToken,
@@ -18,7 +22,7 @@ export function RunItem({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { id: documentId } = usePageId();
-
+  const { setState } = useWriteContext();
   const { data: imageAssets } = useQuery(
     trpc.asset.getImageAssetsByDocumentId.queryOptions({
       documentId: documentId,
@@ -44,13 +48,62 @@ export function RunItem({
     // },
   });
 
+  const handleAddImageAsset = (asset: ImageAsset) => {
+    setState({
+      update: (state) => {
+        const withItem = addItem({
+          state,
+          item: {
+            type: "image",
+            assetId: asset.id,
+            durationInFrames: 100,
+            from: 0,
+            top: 0,
+            left: 0,
+            width: 1024,
+            height: 1920,
+            isDraggingInTimeline: false,
+            id: asset.id, // data.id || "1",
+            opacity: 1,
+            borderRadius: 0,
+            rotation: 0,
+            keepAspectRatio: true,
+            fadeInDurationInSeconds: 0,
+            fadeOutDurationInSeconds: 0,
+          },
+          select: true,
+          position: { type: "front" },
+        });
+        const withAsset = addAssetToState({
+          state: withItem,
+          asset: {
+            id: asset.id,
+            type: "image",
+            filename: "generated.png",
+            width: 1024,
+            height: 1920,
+            size: asset.size,
+            remoteUrl: asset.remoteUrl,
+            remoteFileKey: asset.id,
+            mimeType: "image/png",
+          },
+        });
+        return {
+          ...withAsset,
+          assetStatus: {
+            ...state.assetStatus,
+            [asset.id]: {
+              type: "uploaded",
+            },
+          },
+        };
+      },
+      commitToUndoStack: true,
+    });
+  };
+
   useEffect(() => {
     if (run?.status === "COMPLETED") {
-      queryClient.invalidateQueries({
-        queryKey: trpc.asset.getImageAssetsByDocumentId.queryKey({
-          documentId: documentId,
-        }),
-      });
       queryClient.invalidateQueries({
         queryKey: trpc.asset.getVideoAssetsByDocumentId.queryKey({
           documentId: documentId,
@@ -60,8 +113,16 @@ export function RunItem({
         queryKey: trpc.generate.getRuns.queryKey(),
       });
       console.log("Run completed", run);
+      if (run.output?.asset?.type === "image") {
+        handleAddImageAsset(run.output.asset as ImageAsset);
+        queryClient.invalidateQueries({
+          queryKey: trpc.asset.getImageAssetsByDocumentId.queryKey({
+            documentId: documentId,
+          }),
+        });
+      }
     }
-  }, [run]);
+  }, [run, documentId, queryClient, trpc]);
 
   if (error) return <div>Error: {error.message}</div>;
 

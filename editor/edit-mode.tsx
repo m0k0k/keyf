@@ -8,14 +8,14 @@ type EditModeContextType = {
 };
 
 export const EditModeContext = createContext<EditModeContextType>({
-  editMode: "select",
+  editMode: "preview",
   setEditMode: () => {},
 });
 
 export const EditModeProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [editModeState, setEditModeState] = useState<EditMode>("select");
+  const [editModeState, setEditModeState] = useState<EditMode>("preview");
 
   const setEditMode = useCallback((mode: EditMode) => {
     setEditModeState(mode);

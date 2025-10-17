@@ -17,7 +17,7 @@ export const TopPanel: React.FC<{
     <div className={cn("relative h-full w-full flex-1")}>
       <div
         className={cn(
-          "absolute flex h-full w-[calc(100%-204px)] flex-row gap-1",
+          "absolute flex h-full w-[calc(100%-230px)] flex-row gap-1",
           className,
         )}
       >

@@ -24,6 +24,7 @@ const LayersUnmemoized: React.FC<{
       className={cn(
         "overflow-hidden",
         editMode === "draw-solid" && "overflow-visible",
+        editMode === "select" && "overflow-visible",
       )}
       ref={layerWrapperRef}
     >

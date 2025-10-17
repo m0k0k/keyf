@@ -8,14 +8,14 @@ export const WaitForInitialized = ({
   children: React.ReactNode;
 }) => {
   const initialized = useContext(StateInitializedContext);
-  // if (!initialized) {
-  //   return (
-  //     <div className="bg-editor-starter-bg flex h-full w-full items-center justify-center rounded-2xl">
-  //       <Spinner className="h-4 w-4 text-neutral-600" />
-  //     </div>
-  //   );
-  //   return null;
-  // }
+  if (!initialized) {
+    return (
+      <div className="bg-editor-starter-bg flex h-full w-full items-center justify-center rounded-2xl">
+        <Spinner className="h-4 w-4 text-neutral-600" />
+      </div>
+    );
+    return null;
+  }
 
   return <>{children}</>;
 };

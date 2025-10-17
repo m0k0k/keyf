@@ -199,11 +199,11 @@ export function AppSidebar({
   return (
     <>
       <Sidebar
-        className="border-none p-1 pr-0"
+        className="gap-1 border-none p-2.5 pr-0"
         collapsible="offcanvas"
         {...props}
       >
-        <SidebarHeader className="flex h-9 w-full flex-row items-center justify-between overflow-hidden rounded-xl border bg-black text-sm">
+        <SidebarHeader className="flex h-11 w-full flex-row items-center justify-between overflow-hidden rounded-xl bg-black text-sm">
           <Button
             className="bg-transparent px-1.5 text-white hover:bg-transparent"
             asChild
@@ -216,7 +216,7 @@ export function AppSidebar({
 
           {contexts && !isLoading && <ContextSwitcher contexts={contexts} />}
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent className="bg-editor-starter-panel mt-1 rounded-2xl p-1.5">
           <div className="flex flex-row items-center justify-between">
             <h3 className="px-1 text-xs font-semibold text-neutral-300">
               Documents
@@ -248,10 +248,11 @@ export function AppSidebar({
           </div> */}
 
           {type === "document" && <DocumentsList documents={documents || []} />}
+          <div className="mt-auto">
+            <NavUser user={user} />
+          </div>
         </SidebarContent>
-        <SidebarFooter>
-          <NavUser user={user} />
-        </SidebarFooter>
+        {/* <SidebarFooter></SidebarFooter> */}
         <SidebarRail />
       </Sidebar>
     </>

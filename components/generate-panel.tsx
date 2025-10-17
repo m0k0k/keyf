@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import {
@@ -19,34 +18,22 @@ import { Spinner } from "./ui/spinner";
 import { usePageId } from "@/providers/page-id-provider";
 import { RunItem } from "./run-item";
 import { useWriteContext } from "@/editor/utils/use-context";
-import { addItem } from "@/editor/state/actions/add-item";
-import { addAssetToState } from "@/editor/state/actions/add-asset-to-state";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GenerateVideoPanel } from "@/components/generate-panel-video";
 import { GenerateImagePanel } from "@/components/generate-panel-image";
+import { Model } from "@/lib/types";
 
 export function GeneratePanel() {
   const [activeTab, setActiveTab] = useState<"video" | "image">("video");
   const [duration, setDuration] = useState("4s");
   const [aspectRatio, setAspectRatio] = useState("16:9");
-  const [model, setModel] = useState("sora-2-text-to-video");
-  const [prompt, setPrompt] = useState("");
+  const [model, setModel] = useState("google/imagen4-fast");
+  const [prompt, setPrompt] = useState<string>("");
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { id: documentId } = usePageId();
   const mutation = useMutation(
-    trpc.generate.kieSora2.mutationOptions({
+    trpc.generate.kieImagen4.mutationOptions({
       onSuccess: () => {
         // Invalidate related queries
         queryClient.invalidateQueries({
@@ -59,7 +46,10 @@ export function GeneratePanel() {
   const handleGenerate = () => {
     mutation.mutate({
       prompt,
-      model: model as "sora-2-text-to-video",
+      model: model as
+        | "google/imagen4-fast"
+        | "google/imagen4-ultra"
+        | "google/imagen4",
       documentId: documentId,
     });
   };
@@ -86,6 +76,7 @@ export function GeneratePanel() {
   //         | "google/imagen4-fast"
   //         | "google/imagen4-ultra"
   //         | "google/imagen4",
+  //       documentId: documentId,
   //     });
   //   },
   //   onSuccess: async ({ tempChat, message }) => {

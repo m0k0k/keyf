@@ -1,7 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from "@/trpc/init";
-import { editorRouter } from "./editor.router";
 import { chatRouter } from "./chat.router";
-import { projectRouter } from "./project.router";
 import { documentRouter } from "./document.router";
 import { contextRouter } from "./context.router";
 import { generateRouter } from "./generate.router";
@@ -13,8 +11,6 @@ import { assetRouter } from "./asset.router";
  */
 
 export const appRouter = createTRPCRouter({
-  project: projectRouter,
-  editor: editorRouter,
   chat: chatRouter,
   document: documentRouter,
   context: contextRouter,

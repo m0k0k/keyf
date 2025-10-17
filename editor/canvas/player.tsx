@@ -54,16 +54,18 @@ export const RemotionPlayer = ({
     return {
       width: "100%",
       overflow: editMode === "preview" ? "hidden" : "visible",
+
       height: "100%",
 
       // border: "1px solid #ccc",
       borderRadius: editMode === "preview" ? "32px" : "0px",
-      outline: editMode === "preview" ? "0px solid #000" : "none",
-
-      boxShadow:
-        editMode === "preview" || editMode === "select"
-          ? "0 0 100px 0 rgba(255, 255, 255, 0.1)"
-          : "none",
+      outline: editMode === "preview" ? "10px solid #0f0f0f" : "none",
+      border:
+        editMode === "preview" ? "4px solid rgba(255, 255, 255, 0.15)" : "none",
+      // boxShadow:
+      //   editMode === "preview" || editMode === "select"
+      //     ? "0 0 1000px 1000px #0f0f0f"
+      //     : "none",
     };
   }, [editMode]);
 

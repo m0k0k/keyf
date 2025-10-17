@@ -4,6 +4,7 @@ import { put } from "@vercel/blob";
 import { generateRandomId } from "@/editor/utils/generate-random-id";
 import imageSize from "image-size";
 import { saveAssetImage, updateRun } from "@/lib/db/queries";
+import { ImageAsset } from "@/editor/assets/assets";
 
 export const imagen4 = task({
   //1. Use a unique id for each task
@@ -107,7 +108,19 @@ export const imagen4 = task({
         id: id,
         status: "completed",
       });
-      return taskId;
+      return {
+        asset: {
+          id: assetId,
+          type: "image",
+          filename: `generated.png`,
+          size: 0,
+          remoteUrl: url,
+          remoteFileKey: assetId,
+          mimeType: "image/png",
+          width: dimensions.width,
+          height: dimensions.height,
+        } as ImageAsset,
+      };
     } catch (error) {
       await updateRun({
         id: id,

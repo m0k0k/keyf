@@ -18,7 +18,7 @@ export function DocumentsList({ documents }: { documents: any[] }) {
         documents.map((document) => (
           <Button
             className={clsx(
-              "w-full items-center justify-start truncate rounded-none p-1 px-2 text-xs text-neutral-200 hover:bg-neutral-800",
+              "w-full items-center justify-start truncate rounded-md p-1 px-2 text-xs text-neutral-200 hover:bg-neutral-800",
               document.id === id ? "bg-neutral-800" : "bg-transparent",
             )}
             key={document.id}

@@ -41,7 +41,7 @@ export const SaveButton = () => {
   const trpc = useTRPC();
 
   const mutation = useMutation(
-    trpc.editor.save.mutationOptions({
+    trpc.document.save.mutationOptions({
       onSuccess: () => {
         setIsSaving(false);
         // toast.success("Saved successfully");
