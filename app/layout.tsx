@@ -184,9 +184,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="root">
-            <TRPCReactProvider>{children}</TRPCReactProvider>
-          </div>
+          {children}
           <Toaster theme="dark" />
         </ThemeProvider>
       </body>

@@ -17,6 +17,12 @@ import { getInitialState } from "@/editor/state/initial-state";
 import { TRPCError } from "@trpc/server";
 
 export const documentRouter = createTRPCRouter({
+  getProjectIdByDocumentId: protectedProcedure
+    .input(z.object({ documentId: z.string() }))
+    .query(async ({ input }) => {
+      const projectId = await getProjectIdByDocumentId(input.documentId);
+      return projectId;
+    }),
   getDocumentsById: protectedProcedure
     .input(z.object({ documentId: z.string() }))
     .query(async ({ input }) => {
@@ -37,8 +43,24 @@ export const documentRouter = createTRPCRouter({
     .input(z.object({ documentId: z.string() }))
     .query(async ({ input }) => {
       try {
+        console.log("getDocumentById", input.documentId);
         const document = await getDocumentById(input.documentId);
         return document;
+      } catch (error) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Document not found",
+        });
+      }
+    }),
+
+  getDocumentsByUserId: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input }) => {
+      try {
+        console.log("getDocumentByUserId", input.userId);
+        const documents = await getDocumentsByUserId(input.userId);
+        return documents;
       } catch (error) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -107,14 +129,20 @@ export const documentRouter = createTRPCRouter({
       }
 
       const id = input.id;
-      const brand = await saveDocument({
+      const newDocument = await createNewDocument({
         id: input.id,
         userId: ctx.user.id,
 
         state: input.state,
         projectId: input.projectId,
       });
-      return input.projectId;
+      if (newDocument === undefined) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to save document",
+        });
+      }
+      return { id: input.id };
     }),
   createNewDocument: protectedProcedure
     .input(

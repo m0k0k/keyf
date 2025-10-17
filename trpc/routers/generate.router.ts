@@ -12,6 +12,7 @@ export const generateRouter = createTRPCRouter({
   kieImagen4: protectedProcedure
     .input(
       z.object({
+        documentId: z.string(),
         model: z.enum([
           "google/imagen4-fast",
           "google/imagen4-ultra",
@@ -25,7 +26,10 @@ export const generateRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const projectId = await getProjectIdByDocumentId(input.documentId);
       const handle = await imagen4.trigger({
+        documentId: input.documentId,
+        projectId: projectId,
         userId: ctx.user.id,
         model: input.model,
         prompt: input.prompt,
@@ -47,7 +51,7 @@ export const generateRouter = createTRPCRouter({
       z.object({
         documentId: z.string(),
         model: z.enum(["sora-2-text-to-video"]),
-        prompt: z.string().max(5000),
+        prompt: z.string().min(1).max(5000),
         aspectRatio: z.enum(["portrait", "landscape"]).optional(),
         remove_watermark: z.boolean().optional(),
       }),

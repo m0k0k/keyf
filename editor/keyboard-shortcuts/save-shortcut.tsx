@@ -7,12 +7,13 @@ import {
   cleanUpStateBeforeSaving,
 } from "../state/clean-up-state-before-saving";
 import { saveState } from "../state/persistance";
-import { useCurrentStateAsRef, useEditorId } from "../utils/use-context";
+import { useCurrentStateAsRef } from "../utils/use-context";
+import { usePageId } from "../../providers/page-id-provider";
 
 export const SaveShortcut: React.FC = () => {
   const stateAsRef = useCurrentStateAsRef();
   // const id = stateAsRef.current.undoableState.id;
-  const { id } = useEditorId();
+  const { id } = usePageId();
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Save: Cmd+S (Mac) or Ctrl+S (Windows/Linux)

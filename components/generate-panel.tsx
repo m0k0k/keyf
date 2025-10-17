@@ -11,22 +11,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ImageIcon, Pencil, Sparkles } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AlertCircle, ImageIcon, Pencil, Sparkles } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/react";
 import { toast } from "sonner";
 import { Spinner } from "./ui/spinner";
-import { useDocumentId } from "@/providers/document-id-provider";
+import { usePageId } from "@/providers/page-id-provider";
+import { RunItem } from "./run-item";
+import { useWriteContext } from "@/editor/utils/use-context";
+import { addItem } from "@/editor/state/actions/add-item";
+import { addAssetToState } from "@/editor/state/actions/add-asset-to-state";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GenerateVideoPanel } from "@/components/generate-panel-video";
+import { GenerateImagePanel } from "@/components/generate-panel-image";
 
 export function GeneratePanel() {
-  const [activeTab, setActiveTab] = useState<"video" | "draw">("video");
+  const [activeTab, setActiveTab] = useState<"video" | "image">("video");
   const [duration, setDuration] = useState("4s");
   const [aspectRatio, setAspectRatio] = useState("16:9");
   const [model, setModel] = useState("sora-2-text-to-video");
   const [prompt, setPrompt] = useState("");
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { id: documentId } = useDocumentId();
+  const { id: documentId } = usePageId();
   const mutation = useMutation(
     trpc.generate.kieSora2.mutationOptions({
       onSuccess: () => {
@@ -38,6 +56,20 @@ export function GeneratePanel() {
       },
     }),
   );
+  const handleGenerate = () => {
+    mutation.mutate({
+      prompt,
+      model: model as "sora-2-text-to-video",
+      documentId: documentId,
+    });
+  };
+  const { data: videoAssets } = useQuery(
+    trpc.asset.getVideoAssetsByDocumentId.queryOptions({
+      documentId: documentId,
+    }),
+  );
+  const { setState } = useWriteContext();
+
   // const generateMutation = useMutation({
   //   mutationFn: async ({
   //     prompt,
@@ -69,200 +101,157 @@ export function GeneratePanel() {
   //     toast.error("Failed to save chat");
   //   },
   // });
-  const handleGenerate = () => {
-    mutation.mutate({
-      prompt,
-      model: model as "sora-2-text-to-video",
-      documentId: documentId,
-    });
-  };
 
+  const { data: runs } = useQuery(trpc.generate.getRuns.queryOptions());
   return (
-    <div className="flex flex-col gap-4 p-1.5 text-white">
-      {/* Tabs */}
-      <div className="flex gap-0 border-b border-neutral-800">
-        <button
-          onClick={() => setActiveTab("video")}
-          className={`border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
-            activeTab === "video"
-              ? "border-white text-white"
-              : "border-transparent text-neutral-500 hover:text-neutral-300"
-          }`}
-        >
-          Video
-        </button>
-        <button
-          onClick={() => setActiveTab("draw")}
-          className={`border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
-            activeTab === "draw"
-              ? "border-white text-white"
-              : "border-transparent text-neutral-500 hover:text-neutral-300"
-          }`}
-        >
-          Image
-        </button>
-      </div>
+    <>
+      {" "}
+      <div className="flex w-full max-w-sm flex-col gap-6 p-1.5">
+        <Tabs defaultValue="video">
+          <TabsList className="flex w-full">
+            <TabsTrigger value="video">Video</TabsTrigger>
+            <TabsTrigger value="image">Image</TabsTrigger>
+          </TabsList>
+          <TabsContent value="video">
+            <GenerateVideoPanel />
+          </TabsContent>
+          <TabsContent value="image">
+            <GenerateImagePanel />
+          </TabsContent>
+        </Tabs>
+        <div className="flex-col gap-4 p-1.5 text-white">
+          {/* Tabs */}
+          <div className="flex gap-0 border-b border-neutral-800">
+            <button
+              onClick={() => setActiveTab("video")}
+              className={`border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
+                activeTab === "video"
+                  ? "border-white text-white"
+                  : "border-transparent text-neutral-500 hover:text-neutral-300"
+              }`}
+            >
+              Video
+            </button>
+            <button
+              onClick={() => setActiveTab("image")}
+              className={`border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
+                activeTab === "image"
+                  ? "border-white text-white"
+                  : "border-transparent text-neutral-500 hover:text-neutral-300"
+              }`}
+            >
+              Image
+            </button>
+          </div>
 
-      {/* Video Preview */}
-      {/* <div className="relative">
-        <div className="relative aspect-video overflow-hidden rounded-2xl bg-neutral-900">
-          <div className="relative h-full w-full">
-            <Image
-              src="/placeholder-video.jpg"
-              alt="Video preview"
-              fill
-              className="object-cover blur-sm"
+          {/* Optional Image Upload */}
+          <div className="relative">
+            <span className="absolute -top-2 right-4 z-10 bg-black px-2 py-0.5 text-xs text-neutral-500">
+              Optional
+            </span>
+            <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-neutral-800 bg-neutral-950/50 p-2.5">
+              <ImageIcon className="size-10 text-neutral-700" />
+              <p className="text-center text-sm text-neutral-400">
+                Upload image or{" "}
+                <button className="underline transition-colors hover:text-white">
+                  generate it
+                </button>
+              </p>
+              <p className="text-center text-xs text-neutral-600">
+                PNG, JPG or Paste from clipboard
+              </p>
+            </div>
+          </div>
+
+          {/* Prompt */}
+          <div className="space-y-2 px-1">
+            <label className="text-sm font-medium text-neutral-300">
+              Prompt
+            </label>
+            <Textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe the scene you imagine, with details."
+              className="min-h-32 resize-none border-neutral-800 bg-neutral-950 text-white placeholder:text-neutral-600"
             />
           </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <h2 className="text-6xl font-bold text-lime-400">GENERAL</h2>
-            <p className="mt-2 text-lg text-neutral-400">Sora 2</p>
+
+          {/* Model Selection */}
+          <div className="space-y-2 px-1">
+            <label className="text-sm font-medium text-neutral-300">
+              Model
+            </label>
+            <Select value={model} onValueChange={setModel}>
+              <SelectTrigger className="h-12 w-full border-neutral-800 bg-neutral-950 text-white">
+                <SelectValue>
+                  {model === "sora-2-text-to-video" ? (
+                    <span className="flex items-center gap-2">Sora 2</span>
+                  ) : model === "google/imagen4-fast" ? (
+                    <span className="flex items-center gap-2">
+                      Imagen 4 Fast
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">{model}</span>
+                  )}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent className="border-neutral-800 bg-neutral-950">
+                <SelectItem value="sora-2-text-to-video" className="text-white">
+                  <span className="flex items-center gap-2">Sora 2</span>
+                </SelectItem>
+                <SelectItem value="google/imagen4-fast" className="text-white">
+                  Imagen 4 Fast
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="absolute top-4 right-4 border-neutral-700 bg-neutral-800/80 text-white backdrop-blur-sm hover:bg-neutral-700"
-        >
-          <Pencil className="size-4" />
-          Change
-        </Button>
-      </div> */}
 
-      {/* Optional Image Upload */}
-      <div className="relative">
-        <span className="absolute -top-2 right-4 z-10 bg-black px-2 py-0.5 text-xs text-neutral-500">
-          Optional
-        </span>
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-neutral-800 bg-neutral-950/50 p-2.5">
-          <ImageIcon className="size-10 text-neutral-700" />
-          <p className="text-center text-sm text-neutral-400">
-            Upload image or{" "}
-            <button className="underline transition-colors hover:text-white">
-              generate it
+          {/* Try Unlimited */}
+          <div className="flex items-center justify-center gap-2 text-sm">
+            <Sparkles className="size-5 text-yellow-400" />
+            <span className="text-neutral-400">Try </span>
+            <button className="text-white underline transition-colors hover:text-yellow-400">
+              Sora 2
             </button>
-          </p>
-          <p className="text-center text-xs text-neutral-600">
-            PNG, JPG or Paste from clipboard
-          </p>
+          </div>
+
+          {/* Generate Button */}
+          <Button
+            onClick={handleGenerate}
+            disabled={mutation.isPending}
+            className="mt-auto h-12 w-full rounded-xl bg-white text-base font-semibold text-black hover:bg-orange-200"
+          >
+            Generate
+            {mutation.isPending ? (
+              <Spinner />
+            ) : (
+              <span className="ml-2 flex items-center gap-1">
+                <Sparkles className="size-4" />
+                10
+              </span>
+            )}
+          </Button>
+          {mutation.status === "error" && (
+            <div className="flex items-center gap-2 text-xs text-red-500">
+              <AlertCircle className="size-4" />
+              Something went wrong. Please try again.
+            </div>
+          )}
+          {runs
+            ?.filter((run) => run.status === "queued")
+            .map((run) => (
+              <div
+                className="group flex flex-row items-center gap-3 truncate rounded-md bg-neutral-950/80 px-1.5 py-1 shadow transition hover:bg-neutral-900"
+                key={run.id}
+              >
+                <RunItem
+                  runId={run.id}
+                  publicAccessToken={run.publicAccessToken}
+                />
+              </div>
+            ))}
         </div>
       </div>
-
-      {/* Prompt */}
-      <div className="space-y-2 px-1">
-        <label className="text-sm font-medium text-neutral-300">Prompt</label>
-        <Textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe the scene you imagine, with details."
-          className="min-h-32 resize-none border-neutral-800 bg-neutral-950 text-white placeholder:text-neutral-600"
-        />
-      </div>
-
-      {/* Model Selection */}
-      <div className="space-y-2 px-1">
-        <label className="text-sm font-medium text-neutral-300">Model</label>
-        <Select value={model} onValueChange={setModel}>
-          <SelectTrigger className="h-12 w-full border-neutral-800 bg-neutral-950 text-white">
-            <SelectValue>
-              {model === "sora-2-text-to-video" ? (
-                <span className="flex items-center gap-2">Sora 2</span>
-              ) : model === "google/imagen4-fast" ? (
-                <span className="flex items-center gap-2">Imagen 4 Fast</span>
-              ) : (
-                <span className="flex items-center gap-2">{model}</span>
-              )}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent className="border-neutral-800 bg-neutral-950">
-            <SelectItem value="sora-2-text-to-video" className="text-white">
-              <span className="flex items-center gap-2">Sora 2</span>
-            </SelectItem>
-            <SelectItem value="google/imagen4-fast" className="text-white">
-              Imagen 4 Fast
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Duration and Aspect Ratio */}
-      <div className="grid grid-cols-2 gap-4">
-        {/* <div className="space-y-2">
-          <label className="text-sm font-medium text-neutral-300">
-            Duration
-          </label>
-          <Select value={duration} onValueChange={setDuration}>
-            <SelectTrigger className="h-12 w-full border-neutral-800 bg-neutral-950 text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="border-neutral-800 bg-neutral-950">
-              <SelectItem value="2s" className="text-white">
-                2s
-              </SelectItem>
-              <SelectItem value="4s" className="text-white">
-                4s
-              </SelectItem>
-              <SelectItem value="6s" className="text-white">
-                6s
-              </SelectItem>
-              <SelectItem value="8s" className="text-white">
-                8s
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div> */}
-
-        {/* <div className="space-y-2">
-          <label className="text-sm font-medium text-neutral-300">
-            Aspect Ratio
-          </label>
-          <Select value={aspectRatio} onValueChange={setAspectRatio}>
-            <SelectTrigger className="h-12 w-full border-neutral-800 bg-neutral-950 text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="border-neutral-800 bg-neutral-950">
-              <SelectItem value="16:9" className="text-white">
-                16:9
-              </SelectItem>
-              <SelectItem value="9:16" className="text-white">
-                9:16
-              </SelectItem>
-              <SelectItem value="1:1" className="text-white">
-                1:1
-              </SelectItem>
-              <SelectItem value="4:3" className="text-white">
-                4:3
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div> */}
-      </div>
-
-      {/* Try Unlimited */}
-      {/* <div className="flex items-center justify-center gap-2 text-sm">
-        <Sparkles className="size-5 text-lime-400" />
-        <span className="text-neutral-400">Try unlimited</span>
-        <button className="text-white underline transition-colors hover:text-lime-400">
-          Sora 2
-        </button>
-      </div> */}
-
-      {/* Generate Button */}
-      <Button
-        onClick={handleGenerate}
-        disabled={mutation.isPending}
-        className="mt-auto h-12 w-full rounded-xl bg-white text-base font-semibold text-black hover:bg-purple-200"
-      >
-        Generate
-        {mutation.isPending ? (
-          <Spinner />
-        ) : (
-          <span className="ml-2 flex items-center gap-1">
-            <Sparkles className="size-4" />
-            10
-          </span>
-        )}
-      </Button>
-    </div>
+    </>
   );
 }

@@ -14,31 +14,32 @@ import { TopPanel } from "../editor/top-panel";
 import { WaitForInitialized } from "../editor/wait-for-initialized";
 import { EditModeContext } from "@/editor/edit-mode";
 import { cn } from "@/lib/utils";
+import { Inspector } from "@/editor/inspector/inspector";
 
-export const Editor: React.FC<{ projectId: string; title: string }> = ({
-  projectId,
-  title,
-}) => {
+export const Editor: React.FC = () => {
   const playerRef = useRef<PlayerRef | null>(null);
   const { editMode } = useContext(EditModeContext);
   return (
     <div
       className={cn(
-        editMode === "preview"
-          ? "bg-editor-starter-bg"
-          : "bg-radial-[at_40%_50%] from-white/5 via-neutral-900/5 to-black",
+        editMode === "preview" ? "bg-editor-starter-bg" : "",
 
-        "mr-1 mb-1 flex w-full flex-col items-start justify-between",
+        "flex h-full w-full flex-col items-start justify-between p-1",
       )}
     >
       <WaitForInitialized>
         <PreviewSizeProvider>
-          <ActionRow
+          <ActionRow playerRef={playerRef} />
+
+          <TopPanel
             playerRef={playerRef}
-            title={title}
-            projectId={projectId}
+            className={cn(
+              "rounded-2xl",
+              editMode === "preview"
+                ? "bg-editor-starter-bg"
+                : "bg-neutral-950",
+            )}
           />
-          <TopPanel playerRef={playerRef} />
         </PreviewSizeProvider>
 
         <div

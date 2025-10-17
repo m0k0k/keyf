@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "@/lib/db/drizzle";
-import { eq, desc, asc, gte } from "drizzle-orm";
+import { eq, desc, asc, gte, and } from "drizzle-orm";
 import {
   chat,
   DBMessage,
@@ -52,7 +52,12 @@ export async function saveRun({
   return await db.insert(run).values({ id, userId, publicAccessToken });
 }
 export async function getRunsByUserId({ userId }: { userId: string }) {
-  return await db.select().from(run).where(eq(run.userId, userId));
+  const now = new Date();
+  const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
+  return await db
+    .select()
+    .from(run)
+    .where(and(eq(run.userId, userId), gte(run.createdAt, fifteenMinutesAgo)));
 }
 
 export async function updateRun({
@@ -90,13 +95,11 @@ export async function getProjectsByContextId({ id }: { id: string }) {
 export async function saveDocument({
   id,
   userId,
-
   state,
   projectId,
 }: {
   id: string;
   userId: string;
-
   state: EditorState;
   projectId: string;
 }) {
@@ -105,7 +108,6 @@ export async function saveDocument({
       id,
       projectId,
       userId,
-
       state,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -170,19 +172,24 @@ export async function saveProject({
   return await db.insert(project).values({ id, userId, title, contextId });
 }
 
-export async function getDocumentsByUserId(userId: string) {
-  // Return only unique editors by id for the given userId
-  const documents = await db
-    .selectDistinctOn([document.id])
-    .from(document)
-    .where(eq(document.userId, userId));
-  return documents;
-}
+// export async function getDocumentsByUserId(userId: string) {
+//   // Return only unique editors by id for the given userId
+//   const documents = await db
+//     .selectDistinctOn([document.id])
+//     .from(document)
+//     .where(eq(document.userId, userId));
+//   return documents;
+// }
 
 export async function getDocumentsByProjectId(projectId: string) {
-  // Return only the newest document for each unique editor by id for the given projectId
+  // Return only the newest document for each unique document id for the given projectId, selecting only id, title, createdAt, and projectId
   const documents = await db
-    .selectDistinctOn([document.id])
+    .selectDistinctOn([document.id], {
+      id: document.id,
+      title: document.title,
+      createdAt: document.createdAt,
+      projectId: document.projectId,
+    })
     .from(document)
     .where(eq(document.projectId, projectId))
     .orderBy(document.id, desc(document.createdAt));
@@ -193,6 +200,13 @@ export async function getDocumentById(id: string) {
     .selectDistinctOn([document.id])
     .from(document)
     .where(eq(document.id, id))
+    .orderBy(document.id, desc(document.createdAt));
+}
+export async function getDocumentsByUserId(userId: string) {
+  return await db
+    .selectDistinctOn([document.id])
+    .from(document)
+    .where(eq(document.userId, userId))
     .orderBy(document.id, desc(document.createdAt));
 }
 

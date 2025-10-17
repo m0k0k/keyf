@@ -20,18 +20,9 @@ import {
   TimelineSnappingEnabledContext,
   TracksContext,
   TimelineWriteOnlyContext as WriteOnlyContext,
-  EditorIdContext,
 } from "../context-provider";
 import { EditorStarterItem } from "../items/item-type";
 import { findAssetById } from "./find-asset-by-id";
-
-export const useEditorId = () => {
-  const context = useContext(EditorIdContext);
-  if (!context) {
-    throw new Error("EditorIdContext is not set");
-  }
-  return context;
-};
 
 export const useTimelineContext = () => {
   const context = useContext(TimelineContext);

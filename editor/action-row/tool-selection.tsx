@@ -17,15 +17,17 @@ import { useCurrentStateAsRef, useWriteContext } from "../utils/use-context";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTRPC } from "../../trpc/react";
-import { useEditorId } from "../utils/use-context";
+
 import { IconParkSolidPreviewOpen } from "@/components/icon";
+import { usePageId } from "../../providers/page-id-provider";
 
 export const ToolSelection: React.FC<{
   playerRef: React.RefObject<PlayerRef | null>;
 }> = ({ playerRef }) => {
   const timelineWriteContext = useWriteContext();
   const { editMode, setEditMode } = useContext(EditModeContext);
-  const { id: editorId } = useEditorId();
+
+  const { id: documentId } = usePageId();
   const setPreviewEditMode = useCallback(() => {
     setEditMode("preview");
   }, [setEditMode]);
@@ -84,7 +86,7 @@ export const ToolSelection: React.FC<{
             tracks: stateAsRef.current.undoableState.tracks,
             filename: file.name,
             mutation,
-            editorId,
+            documentId,
           }),
         );
       }
@@ -92,7 +94,7 @@ export const ToolSelection: React.FC<{
       // Allow for more files to be added
       e.target.value = "";
     },
-    [playerRef, stateAsRef, timelineWriteContext, mutation, editorId],
+    [playerRef, stateAsRef, timelineWriteContext, mutation, documentId],
   );
   return (
     <>

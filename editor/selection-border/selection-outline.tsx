@@ -22,7 +22,6 @@ import {
   useAssetIfApplicable,
   useAssetStatus,
   useCurrentStateAsRef,
-  useEditorId,
   useSelectedItems,
   useWriteContext,
 } from "../utils/use-context";
@@ -33,6 +32,7 @@ import { SelectionUploadProgress } from "./selection-upload-progress";
 import { useMutation } from "@tanstack/react-query";
 import { useTRPC } from "../../trpc/react";
 import { toast } from "sonner";
+import { usePageId } from "../../providers/page-id-provider";
 
 const AXIS_LOCK_THRESHOLD = 10; // Minimum movement to determine axis
 
@@ -50,7 +50,7 @@ const SelectionOutlineUnmemoized: React.FC<{
       }),
     [itemWithoutHoverPreview, textItemHoverPreview],
   );
-  const { id: editorId } = useEditorId();
+  const { id: documentId } = usePageId();
   const { selectedItems } = useSelectedItems();
   const { setState } = useWriteContext();
   const { assetStatus } = useAssetStatus();
@@ -315,9 +315,9 @@ const SelectionOutlineUnmemoized: React.FC<{
 
   const handleRetry = useCallback(() => {
     if (asset) {
-      retryAssetUpload({ asset, setState, mutation, editorId });
+      retryAssetUpload({ asset, setState, mutation, documentId });
     }
-  }, [asset, setState, mutation]);
+  }, [asset, setState, mutation, documentId]);
 
   return (
     <ItemContextMenuTrigger item={item}>

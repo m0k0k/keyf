@@ -25,7 +25,7 @@ export const Inspector: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex h-full flex-col gap-1 pt-1">
+    <div className="absolute top-0 right-0 flex h-full flex-col gap-1">
       <div className="flex h-full flex-col" style={style} ref={ref}>
         {selectedItems.length > 1 ? null : selectedItems.length === 1 ? (
           <InspectorContent itemId={selectedItems[0]} />

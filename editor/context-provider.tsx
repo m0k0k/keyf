@@ -405,94 +405,85 @@ export const ContextProvider = ({
     [state.activeSnapPoint],
   );
 
-  const editorIdContext = useMemo(
-    (): EditorIdContext => ({
-      id: id,
-    }),
-    [id],
-  );
-
   // Why there is such a deeply nested context provider:
   // https://remotion.dev/docs/editor-starter/state-management#contexts
   return (
-    <EditorIdContext.Provider value={editorIdContext}>
-      <TimelineContext.Provider value={readContext}>
-        <TimelineWriteOnlyContext.Provider value={writeContext}>
-          <FpsContext.Provider value={fpsContext}>
-            <DimensionsContext.Provider value={dimensionsContext}>
-              <SelectedItemsContext.Provider value={selectedItemsContext}>
-                <AssetsContext.Provider value={assetsContext}>
-                  <AssetStatusContext.Provider value={assetStatusContext}>
-                    <TracksContext.Provider value={tracksContext}>
-                      <FullStateContext.Provider value={state}>
-                        <CanUseUndoStackContext.Provider
-                          value={canUseUndoStackContext}
+    <TimelineContext.Provider value={readContext}>
+      <TimelineWriteOnlyContext.Provider value={writeContext}>
+        <FpsContext.Provider value={fpsContext}>
+          <DimensionsContext.Provider value={dimensionsContext}>
+            <SelectedItemsContext.Provider value={selectedItemsContext}>
+              <AssetsContext.Provider value={assetsContext}>
+                <AssetStatusContext.Provider value={assetStatusContext}>
+                  <TracksContext.Provider value={tracksContext}>
+                    <FullStateContext.Provider value={state}>
+                      <CanUseUndoStackContext.Provider
+                        value={canUseUndoStackContext}
+                      >
+                        <CurrentStateContext.Provider
+                          value={currentStateContext}
                         >
-                          <CurrentStateContext.Provider
-                            value={currentStateContext}
-                          >
-                            <AllItemsContext.Provider value={allItemsContext}>
-                              <TextItemEditingContext.Provider
-                                value={state.textItemEditing}
+                          <AllItemsContext.Provider value={allItemsContext}>
+                            <TextItemEditingContext.Provider
+                              value={state.textItemEditing}
+                            >
+                              <TextItemHoverPreviewContext.Provider
+                                value={textItemHoverPreviewContext}
                               >
-                                <TextItemHoverPreviewContext.Provider
-                                  value={textItemHoverPreviewContext}
+                                <RenderingContext.Provider
+                                  value={renderingContext}
                                 >
-                                  <RenderingContext.Provider
-                                    value={renderingContext}
+                                  <CaptionStateContext.Provider
+                                    value={captionStateContext}
                                   >
-                                    <CaptionStateContext.Provider
-                                      value={captionStateContext}
+                                    <StateInitializedContext.Provider
+                                      value={state.initialized}
                                     >
-                                      <StateInitializedContext.Provider
-                                        value={state.initialized}
+                                      <ItemsBeingTrimmedContext.Provider
+                                        value={itemsBeingTrimmedContext}
                                       >
-                                        <ItemsBeingTrimmedContext.Provider
-                                          value={itemsBeingTrimmedContext}
+                                        <LoopContext.Provider
+                                          value={state.loop}
                                         >
-                                          <LoopContext.Provider
-                                            value={state.loop}
+                                          <TimelineSnappingEnabledContext.Provider
+                                            value={state.isSnappingEnabled}
                                           >
-                                            <TimelineSnappingEnabledContext.Provider
-                                              value={state.isSnappingEnabled}
+                                            <TimelineHeightContext.Provider
+                                              value={state.timelineHeight}
                                             >
-                                              <TimelineHeightContext.Provider
-                                                value={state.timelineHeight}
+                                              <ActiveTimelineSnapContext.Provider
+                                                value={
+                                                  activeTimelineSnapContext
+                                                }
                                               >
-                                                <ActiveTimelineSnapContext.Provider
-                                                  value={
-                                                    activeTimelineSnapContext
-                                                  }
-                                                >
-                                                  <EditModeProvider>
-                                                    <DragPreviewProvider>
-                                                      <TimelineZoomProvider>
-                                                        {children}
-                                                      </TimelineZoomProvider>
-                                                    </DragPreviewProvider>
-                                                  </EditModeProvider>
-                                                </ActiveTimelineSnapContext.Provider>
-                                              </TimelineHeightContext.Provider>
-                                            </TimelineSnappingEnabledContext.Provider>
-                                          </LoopContext.Provider>
-                                        </ItemsBeingTrimmedContext.Provider>
-                                      </StateInitializedContext.Provider>
-                                    </CaptionStateContext.Provider>
-                                  </RenderingContext.Provider>
-                                </TextItemHoverPreviewContext.Provider>
-                              </TextItemEditingContext.Provider>
-                            </AllItemsContext.Provider>
-                          </CurrentStateContext.Provider>
-                        </CanUseUndoStackContext.Provider>
-                      </FullStateContext.Provider>
-                    </TracksContext.Provider>
-                  </AssetStatusContext.Provider>
-                </AssetsContext.Provider>
-              </SelectedItemsContext.Provider>
-            </DimensionsContext.Provider>
-          </FpsContext.Provider>
-        </TimelineWriteOnlyContext.Provider>
-      </TimelineContext.Provider>
-    </EditorIdContext.Provider>
+                                                <EditModeProvider>
+                                                  <DragPreviewProvider>
+                                                    <TimelineZoomProvider>
+                                                      {children}
+                                                    </TimelineZoomProvider>
+                                                  </DragPreviewProvider>
+                                                </EditModeProvider>
+                                              </ActiveTimelineSnapContext.Provider>
+                                            </TimelineHeightContext.Provider>
+                                          </TimelineSnappingEnabledContext.Provider>
+                                        </LoopContext.Provider>
+                                      </ItemsBeingTrimmedContext.Provider>
+                                    </StateInitializedContext.Provider>
+                                  </CaptionStateContext.Provider>
+                                </RenderingContext.Provider>
+                              </TextItemHoverPreviewContext.Provider>
+                            </TextItemEditingContext.Provider>
+                          </AllItemsContext.Provider>
+                        </CurrentStateContext.Provider>
+                      </CanUseUndoStackContext.Provider>
+                    </FullStateContext.Provider>
+                  </TracksContext.Provider>
+                </AssetStatusContext.Provider>
+              </AssetsContext.Provider>
+            </SelectedItemsContext.Provider>
+          </DimensionsContext.Provider>
+        </FpsContext.Provider>
+      </TimelineWriteOnlyContext.Provider>
+    </TimelineContext.Provider>
   );
 };

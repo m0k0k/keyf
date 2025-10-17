@@ -22,9 +22,7 @@ import Link from "next/link";
 
 export const ActionRow: React.FC<{
   playerRef: React.RefObject<PlayerRef | null>;
-  title: string;
-  projectId: string;
-}> = ({ playerRef, title, projectId }) => {
+}> = ({ playerRef }) => {
   return (
     <div
       className="relative z-50"

@@ -8,7 +8,7 @@ export const retryAssetUpload = async ({
   asset,
   setState,
   mutation,
-  editorId,
+  documentId,
 }: {
   asset: EditorStarterAsset;
   setState: SetState;
@@ -18,7 +18,7 @@ export const retryAssetUpload = async ({
       documentId: string;
     }) => Promise<{ success: boolean }>;
   };
-  editorId: string;
+  documentId: string;
 }) => {
   // Retrieve the cached file from IndexedDB
   const file = await getObject({ key: asset.id });
@@ -51,6 +51,6 @@ export const retryAssetUpload = async ({
     presignResultPromise,
     file,
     mutation,
-    editorId,
+    documentId,
   });
 };

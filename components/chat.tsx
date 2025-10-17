@@ -22,9 +22,10 @@ import { PlayerRef } from "@remotion/player";
 import { useIsPlaying } from "@/editor/playback-controls/use-is-playing";
 import { MessageParts } from "./message-parts";
 import { MessageInput } from "./message-input";
-import { useEditorId } from "@/editor/utils/use-context";
+
 import { Button } from "./ui/button";
 import { MaterialSymbolsAddCircleRounded, MaterialSymbolsClose } from "./icon";
+import { usePageId } from "@/providers/page-id-provider";
 
 export default function Chat({
   initialMessages,
@@ -70,11 +71,11 @@ export default function Chat({
 
   const state = useFullState();
   // const documentId = state.undoableState.id || "";
-  const { id: documentId } = useEditorId();
+  const { id: documentId } = usePageId();
 
   return (
     <>
-      <div className="flex max-w-[300px] min-w-[300px] p-1 pl-0">
+      <div className="flex h-dvh max-w-[300px] min-w-[300px] flex-1 p-1 pl-0">
         <div className="bg-editor-starter-panel flex h-full w-full flex-col rounded-3xl transition-all duration-700 ease-in-out">
           {/* [background:linear-gradient(135deg,_#a259ff_0%,_#000_35%,_#a259ff_35%,_#ff6f3c_50%,_#212121_100%)] */}
           {/* Chat Header */}

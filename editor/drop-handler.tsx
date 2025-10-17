@@ -10,14 +10,11 @@ import {
 } from "./flags";
 import { PreviewSizeContext } from "./preview-size";
 import { calculateScale } from "./utils/calculate-canvas-transformation";
-import {
-  useCurrentStateAsRef,
-  useEditorId,
-  useWriteContext,
-} from "./utils/use-context";
+import { useCurrentStateAsRef, useWriteContext } from "./utils/use-context";
 import { useTRPC } from "../trpc/react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { usePageId } from "../providers/page-id-provider";
 
 export const DropHandler: React.FC<{
   children: React.ReactNode;
@@ -37,7 +34,7 @@ export const DropHandler: React.FC<{
   const timelineWriteContext = useWriteContext();
   const stateAsRef = useCurrentStateAsRef();
   const trpc = useTRPC();
-  const editorId = useEditorId().id;
+  const { id: documentId } = usePageId();
   const mutation = useMutation(
     trpc.asset.createAsset.mutationOptions({
       onSuccess: () => {
@@ -127,7 +124,7 @@ export const DropHandler: React.FC<{
             dropPosition,
             filename: file.name,
             mutation,
-            editorId,
+            documentId,
           }),
         );
       }
@@ -145,7 +142,7 @@ export const DropHandler: React.FC<{
       timelineWriteContext,
       stateAsRef,
       mutation,
-      editorId,
+      documentId,
     ],
   );
 

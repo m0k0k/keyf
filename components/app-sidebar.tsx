@@ -27,13 +27,17 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { User } from "better-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useSession } from "@/lib/auth-client";
 import { useTRPC } from "@/trpc/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { usePageId } from "@/providers/page-id-provider";
+import { DocumentsList } from "@/components/documents-list";
+import { Spinner } from "./ui/spinner";
+import { Finder } from "./finder";
 
 // This is sample data.
 const data = {
@@ -152,16 +156,6 @@ const data = {
       url: "/app",
       icon: Frame,
     },
-    // {
-    //   name: "Sales & Marketing",
-    //   url: "#",
-    //   icon: PieChart,
-    // },
-    // {
-    //   name: "Travel",
-    //   url: "#",
-    //   icon: Map,
-    // },
   ],
 };
 
@@ -191,25 +185,69 @@ export function AppSidebar({
     trpc.context.getAllContexts.queryOptions(),
   );
 
+  const { id, type } = usePageId();
+  const { data: documents } = useQuery(
+    trpc.document.getDocumentsByUserId.queryOptions({
+      userId: user.id,
+    }),
+  );
+
+  const mutation = useMutation(
+    trpc.document.createNewDocument.mutationOptions({}),
+  );
+
   return (
     <>
-      <Sidebar className="border-none p-1.5" collapsible="icon" {...props}>
-        <SidebarHeader className="flex h-9 w-full flex-row items-center justify-between rounded-xl border bg-[linear-gradient(135deg,_#000_0%,_#000_30%,_#a259ff_40%,_#ff6f3c_50%,_#1fa2ff_100%)] text-sm">
-          {/* <Button
-            className="bg-transparent p-0 text-white hover:bg-transparent"
+      <Sidebar
+        className="border-none p-1 pr-0"
+        collapsible="offcanvas"
+        {...props}
+      >
+        <SidebarHeader className="flex h-9 w-full flex-row items-center justify-between overflow-hidden rounded-xl border bg-black text-sm">
+          <Button
+            className="bg-transparent px-1.5 text-white hover:bg-transparent"
             asChild
           >
-            <Link href="/app">
+            <Link href="#">
               <Image src="/logo-black.png" alt="Keyf" width={20} height={20} />
               <span className="font-corp font-valve tracking-tight">Keyf</span>
             </Link>
-          </Button> */}
+          </Button>
 
           {contexts && !isLoading && <ContextSwitcher contexts={contexts} />}
         </SidebarHeader>
         <SidebarContent>
+          <div className="flex flex-row items-center justify-between">
+            <h3 className="px-1 text-xs font-semibold text-neutral-300">
+              Documents
+            </h3>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="glassBtn p-3"
+              onClick={() =>
+                mutation.mutate({
+                  documentId: id,
+                })
+              }
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? <Spinner /> : "+"}
+            </Button>
+          </div>
+          {/* {documents && <pre>{JSON.stringify(documents, null, 2)}</pre>} */}
           {/* <NavMain items={data.navMain} /> */}
-          <NavProjects projects={data.projects} />
+          {/* <NavProjects projects={data.projects} /> */}
+
+          {/* <div className="truncate p-1 text-xs text-neutral-400">
+            {id && (
+              <>
+                {type} - {id}{" "}
+              </>
+            )}
+          </div> */}
+
+          {type === "document" && <DocumentsList documents={documents || []} />}
         </SidebarContent>
         <SidebarFooter>
           <NavUser user={user} />

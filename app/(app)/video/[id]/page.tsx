@@ -1,8 +1,8 @@
 import { HydrateClient, trpc, prefetch } from "@/trpc/server";
-import { DeferredEditPage } from "./deferred-edit-page";
+import { PageRouter } from "../../page-router";
 import { WithSkeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
-export default async function EditPageRoute({
+export default async function DocumentPageRoute({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -11,9 +11,11 @@ export default async function EditPageRoute({
 
   // Prefetch the required queries for hydration
   prefetch(trpc.document.getChatsById.queryOptions({ documentId }));
-  prefetch(trpc.document.getDocumentsById.queryOptions({ documentId }));
+  // prefetch(trpc.document.getDocumentsById.queryOptions({ documentId }));
   prefetch(trpc.document.getDocumentById.queryOptions({ documentId }));
-  prefetch(trpc.document.getProjectTitleById.queryOptions({ documentId }));
+  // prefetch(trpc.document.getProjectTitleById.queryOptions({ documentId }));
+
+  console.log("documentId prefetched", documentId);
   return (
     <HydrateClient>
       <Suspense
@@ -23,7 +25,7 @@ export default async function EditPageRoute({
           </WithSkeleton>
         }
       >
-        <DeferredEditPage />
+        <PageRouter />
       </Suspense>
     </HydrateClient>
   );

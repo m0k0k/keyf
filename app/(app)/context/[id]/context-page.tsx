@@ -35,12 +35,15 @@ export function ContextPage({ id }: { id: string }) {
   const { data: projects } = useQuery(
     trpc.context.getProjectsByContextId.queryOptions({ id }),
   );
+  const { data: documents } = useQuery(
+    trpc.context.getDocumentsByContextId.queryOptions({ id }),
+  );
   const projectId = generateUUID();
   const documentId = generateUUID();
   const mutation = useMutation(
     trpc.document.saveDocument.mutationOptions({
-      onSuccess: (projectId) => {
-        router.push(`/project/${projectId}`);
+      onSuccess: ({ id }) => {
+        router.push(`/video/${id}`);
       },
       onError: (error) => {
         toast.error(
@@ -72,9 +75,9 @@ export function ContextPage({ id }: { id: string }) {
           </Breadcrumb>
         </div>
       </header>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          <div className="bg-muted/50 aspect-video rounded-xl" />
+      <div className="flex flex-1 flex-col gap-4 p-2 pt-0">
+        <div className="flex flex-row gap-2">
+          {/* <div className="bg-muted/50 aspect-video rounded-xl" /> */}
           <div className="bg-muted/50 aspect-video rounded-xl p-2">
             Instructions: <p className="text-sm">{context?.[0].instructions}</p>
           </div>
@@ -97,15 +100,59 @@ export function ContextPage({ id }: { id: string }) {
           </div>
         </div>
 
-        <div className="font-corp h-full w-full">
-          {projects?.map((project) => (
-            <div
-              className="items-center justify-center rounded-2xl border bg-neutral-700 p-2"
-              key={project.id}
-            >
-              <Link href={`/project/${project.id}`}>{project.title}</Link>
+        <div className="font-corp h-full w-full space-y-8">
+          {projects && projects.length > 0 ? (
+            projects.map((project: any) => (
+              <div
+                key={project.id}
+                className="overflow-hidden rounded-xl border border-neutral-700 bg-neutral-800 shadow-xl"
+              >
+                <div className="flex items-center justify-between bg-neutral-900/80 px-6 py-1">
+                  <span className="text-lg font-semibold text-white hover:underline">
+                    {project.title}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(project.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="bg-neutral-800">
+                  {documents &&
+                  documents.filter((doc: any) => doc.projectId === project.id)
+                    .length > 0 ? (
+                    <ul className="divide-y divide-neutral-700">
+                      {documents
+                        .filter((doc: any) => doc.projectId === project.id)
+                        .map((doc: any) => (
+                          <li key={doc.id}>
+                            <Link
+                              href={`/video/${doc.id}`}
+                              className="block rounded-lg px-6 py-1 transition hover:bg-neutral-700"
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium text-white">
+                                  {doc.title}
+                                </span>
+                                <span className="ml-2 text-xs text-gray-400">
+                                  {new Date(doc.createdAt).toLocaleString()}
+                                </span>
+                              </div>
+                            </Link>
+                          </li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <div className="px-6 py-6 text-sm text-gray-400 italic">
+                      No documents found for this project.
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="py-12 text-center text-gray-400">
+              No projects found.
             </div>
-          ))}
+          )}
         </div>
       </div>
     </>

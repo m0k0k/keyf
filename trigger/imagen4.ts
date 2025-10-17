@@ -18,6 +18,8 @@ export const imagen4 = task({
   //2. The run function is the main function of the task
   run: async (
     payload: {
+      documentId: string;
+      projectId: string;
       userId: string;
       model: string;
       prompt: string;
@@ -29,89 +31,91 @@ export const imagen4 = task({
     { ctx },
   ) => {
     const id = ctx.run.id;
-
-    //3. You can write code that runs for a long time here, there are no timeouts
-    // await wait.for({ seconds: 30 });
-    console.log(payload);
-    const resp = await kieApi().postJSON<any>("/api/v1/jobs/createTask", {
-      model: "google/imagen4-fast",
-      input: {
-        prompt: payload.prompt,
-        aspect_ratio: "9:16",
-      },
-    });
-    if (resp.code !== 200) {
-      throw new Error("Failed to create a task");
-    }
-    const taskId = resp.data.taskId;
-
-    let data;
-    while (true) {
-      data = await kieApi().getJSON<any>(
-        `/api/v1/jobs/recordInfo?taskId=${taskId}`,
-      );
-      if (data.data.state === "success") {
-        break;
-      }
-      console.log("data", data);
-      await delay(1000);
-    }
-
-    const assetId = generateRandomId();
-    const imageUrl = JSON.parse(data.data.resultJson).resultUrls[0];
-
-    const response = await fetch(imageUrl);
-    const file = await response.blob();
-
-    const buf = Buffer.from(await file.arrayBuffer());
-
-    const dimensions = imageSize(buf);
-
-    // const image = sharp(buf);
-    // const metadata = await image.metadata();
-    // const { width, height } = metadata;
-    //
-    const { url } = await put("generated.png", file, {
-      access: "public",
-      contentType: "image/png",
-      addRandomSuffix: true,
-    });
-
-    await saveAssetImage({
-      _assetImage: {
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        filename: `generated.png`,
-        size: 0,
-        remoteUrl: url,
-        remoteFileKey: assetId,
-        mimeType: "image/png",
-        type: "image",
-        id: assetId,
-        width: 1000,
-        height: 1000,
-        documentId: "0db96e38-8605-4fd4-a5ea-f089566c67fe",
-        projectId: "4bb27a9c-a3ec-442b-90ad-269a99394e67",
-        userId: payload.userId,
-        visibility: "private",
-        isPinned: false,
-      },
-    });
-
     try {
+      //3. You can write code that runs for a long time here, there are no timeouts
+      // await wait.for({ seconds: 30 });
+      console.log(payload);
+      const resp = await kieApi().postJSON<any>("/api/v1/jobs/createTask", {
+        model: "google/imagen4-fast",
+        input: {
+          prompt: payload.prompt,
+          aspect_ratio: "9:16",
+        },
+      });
+      if (resp.code !== 200) {
+        throw new Error("Failed to create a task");
+      }
+      const taskId = resp.data.taskId;
+
+      let data;
+      while (true) {
+        data = await kieApi().getJSON<any>(
+          `/api/v1/jobs/recordInfo?taskId=${taskId}`,
+        );
+        if (data.data.state === "success") {
+          break;
+        }
+        if (data.code !== 200) {
+          throw new Error("Failed to generate image");
+        }
+        console.log("data", data);
+        await delay(1000);
+      }
+
+      const assetId = generateRandomId();
+      const imageUrl = JSON.parse(data.data.resultJson).resultUrls[0];
+
+      const response = await fetch(imageUrl);
+      const file = await response.blob();
+
+      const buf = Buffer.from(await file.arrayBuffer());
+
+      const dimensions = imageSize(buf);
+
+      // const image = sharp(buf);
+      // const metadata = await image.metadata();
+      // const { width, height } = metadata;
+      //
+      const { url } = await put("generated.png", file, {
+        access: "public",
+        contentType: "image/png",
+        addRandomSuffix: true,
+      });
+
+      await saveAssetImage({
+        _assetImage: {
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          filename: `generated.png`,
+          size: 0,
+          remoteUrl: url,
+          remoteFileKey: assetId,
+          mimeType: "image/png",
+          type: "image",
+          id: assetId,
+          width: 1000,
+          height: 1000,
+          documentId: payload.documentId,
+          projectId: payload.projectId,
+          userId: payload.userId,
+          visibility: "private",
+          isPinned: false,
+        },
+      });
+
       await updateRun({
         id: id,
         status: "completed",
       });
+      return taskId;
     } catch (error) {
       await updateRun({
         id: id,
         status: "failed",
       });
       console.error("Error updating run", error);
+      throw error;
     }
-
-    return taskId;
   },
 });
 

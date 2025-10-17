@@ -4,7 +4,7 @@ import { useRealtimeRun } from "@trigger.dev/react-hooks";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/react";
 import { delay } from "@/lib/delay";
-import { useDocumentId } from "@/providers/document-id-provider";
+import { usePageId } from "@/providers/page-id-provider";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { Spinner } from "./ui/spinner";
@@ -17,7 +17,7 @@ export function RunItem({
 }) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { id: documentId } = useDocumentId();
+  const { id: documentId } = usePageId();
 
   const { data: imageAssets } = useQuery(
     trpc.asset.getImageAssetsByDocumentId.queryOptions({

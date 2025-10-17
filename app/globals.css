@@ -88,7 +88,7 @@
 }
 
 .dark {
-  --background: #000000;
+  --background: #000;
   --foreground: oklch(90.365% 0.0001 271.152);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -131,7 +131,7 @@
 }
 
 @theme {
-  --color-editor-starter-bg: #000000;
+  --color-editor-starter-bg: #000;
   --color-editor-starter-panel: #1b1b1b; /* should be darker than bg to create a contrast */
   --color-editor-starter-border: #575757;
   --color-editor-starter-accent: oklch(63% 42% 249deg);

@@ -17,12 +17,12 @@ import { UndoableState } from "../state/types";
 import { hasAssetsWithErrors } from "../utils/asset-status-utils";
 import { clsx } from "../utils/clsx";
 import { hasUploadingAssets } from "../utils/upload-status";
-import { useEditorId, useFullState } from "../utils/use-context";
+import { useFullState } from "../utils/use-context";
 import { useTRPC } from "../../trpc/react";
 import { useMutation } from "@tanstack/react-query";
-import { useDocumentId } from "@/providers/document-id-provider";
+import { usePageId } from "../../providers/page-id-provider";
 import equal from "fast-deep-equal";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "../../components/ui/spinner";
 
 export const saveButtonRef = React.createRef<{
   setLastSavedState: (state: UndoableState) => void;
@@ -30,8 +30,8 @@ export const saveButtonRef = React.createRef<{
 
 export const SaveButton = () => {
   const state = useFullState();
-  const { id } = useEditorId();
-  const { id: documentId } = useDocumentId();
+
+  const { id: documentId } = usePageId();
 
   const [lastSavedState, setLastSavedState] = useState<UndoableState | null>(
     null,

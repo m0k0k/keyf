@@ -16,7 +16,7 @@ export const TriggerRenderButton: React.FC<{
     <Button
       onClick={onTrigger}
       disabled={disabled}
-      className="font-valve w-full bg-neutral-900 text-sm text-neutral-200 hover:bg-neutral-600"
+      className="font-valve w-full bg-neutral-900 text-sm text-neutral-200 hover:bg-neutral-600 disabled:text-neutral-400 disabled:opacity-100"
     >
       Export
       <DownloadIcon />

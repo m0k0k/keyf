@@ -9,7 +9,7 @@ import { setSelectedItems } from "@/editor/state/actions/set-selected-items";
 import { Spinner } from "./ui/spinner";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useDocumentId } from "@/providers/document-id-provider";
+import { usePageId } from "@/providers/page-id-provider";
 import { RunItem } from "@/components/run-item";
 import { addItem } from "@/editor/state/actions/add-item";
 import { addAssetToState } from "@/editor/state/actions/add-asset-to-state";
@@ -22,7 +22,7 @@ export function Finder({
 }) {
   const { setState } = useWriteContext();
   const trpc = useTRPC();
-  const { id: documentId } = useDocumentId();
+  const { id: documentId } = usePageId();
   const { data: assets } = useQuery(
     trpc.asset.getAssetsByDocumentId.queryOptions({ documentId: documentId }),
   );
@@ -41,8 +41,6 @@ export function Finder({
   const mutation = useMutation(
     trpc.document.createNewDocument.mutationOptions({}),
   );
-
-  // const { id: documentId } = useEditorId();
 
   return (
     <div className="flex h-full w-full max-w-[200px] flex-col gap-1 p-1">
@@ -85,30 +83,30 @@ export function Finder({
                   update: (prev) => setSelectedItems(prev, selectedIds),
                   commitToUndoStack: false,
                 });
-                const loadedState: UndoableState = document.state;
+                // const loadedState: UndoableState = document.state;
 
                 // Basic validation of loaded state structure
-                if (
-                  !loadedState ||
-                  typeof loadedState !== "object" ||
-                  !Array.isArray(loadedState.tracks) ||
-                  typeof loadedState.items !== "object" ||
-                  typeof loadedState.assets !== "object" ||
-                  typeof loadedState.fps !== "number" ||
-                  typeof loadedState.compositionWidth !== "number" ||
-                  typeof loadedState.compositionHeight !== "number"
-                ) {
-                  throw new Error("Invalid state file format");
-                }
+                // if (
+                //   !loadedState ||
+                //   typeof loadedState !== "object" ||
+                //   !Array.isArray(loadedState.tracks) ||
+                //   typeof loadedState.items !== "object" ||
+                //   typeof loadedState.assets !== "object" ||
+                //   typeof loadedState.fps !== "number" ||
+                //   typeof loadedState.compositionWidth !== "number" ||
+                //   typeof loadedState.compositionHeight !== "number"
+                // ) {
+                //   throw new Error("Invalid state file format");
+                // }
 
-                // Update the state
-                setState({
-                  update: (prevState: EditorState) => ({
-                    ...prevState,
-                    undoableState: loadedState,
-                  }),
-                  commitToUndoStack: true,
-                });
+                // // Update the state
+                // setState({
+                //   update: (prevState: EditorState) => ({
+                //     ...prevState,
+                //     undoableState: loadedState,
+                //   }),
+                //   commitToUndoStack: true,
+                // });
               }}
             >
               <Link

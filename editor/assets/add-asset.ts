@@ -29,7 +29,7 @@ const innerAddAsset = async ({
   tracks,
   filename,
   mutation,
-  editorId,
+  documentId,
 }: {
   file: Blob;
   timelineWriteContext: TimelineWriteOnlyContext;
@@ -46,7 +46,7 @@ const innerAddAsset = async ({
       documentId: string;
     }) => Promise<{ success: boolean }>;
   };
-  editorId: string;
+  documentId: string;
 }) => {
   const { setState } = timelineWriteContext;
 
@@ -103,7 +103,7 @@ const innerAddAsset = async ({
     mutation,
     presignResultPromise,
     file,
-    editorId,
+    documentId,
   });
 };
 
@@ -118,7 +118,7 @@ export const addAsset = async ({
   compositionHeight,
   tracks,
   mutation,
-  editorId,
+  documentId,
 }: {
   file: Blob;
   filename: string;
@@ -135,7 +135,7 @@ export const addAsset = async ({
       documentId: string;
     }) => Promise<{ success: boolean }>;
   };
-  editorId: string;
+  documentId: string;
 }) => {
   try {
     await innerAddAsset({
@@ -149,7 +149,7 @@ export const addAsset = async ({
       dropPosition,
       filename,
       mutation,
-      editorId,
+      documentId,
     });
   } catch (error: unknown) {
     const message = getErrorStack(error);

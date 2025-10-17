@@ -33,8 +33,8 @@ export const PlaybackControls: React.FC<{
     <div className="absolute bottom-0 flex h-10 w-full shrink-0 flex-row items-center justify-between overflow-hidden px-4 text-white">
       <div className="flex flex-1 items-center">
         {FEATURE_SPLIT_ITEM ? <SplitItemTool playerRef={playerRef} /> : null}
-        {FEATURE_LOOP_BUTTON && <LoopButton />}
-        {FEATURE_TIMELINE_SNAPPING ? <SnappingToggle /> : null}
+        {/* {FEATURE_LOOP_BUTTON && <LoopButton />} */}
+        {/* {FEATURE_TIMELINE_SNAPPING ? <SnappingToggle /> : null} */}
       </div>
 
       <div className="flex items-center gap-8">

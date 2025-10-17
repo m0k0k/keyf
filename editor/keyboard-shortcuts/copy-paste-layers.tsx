@@ -15,14 +15,11 @@ import { cutItems } from "../state/actions/cut-items";
 import { pasteItems } from "../state/actions/paste-items";
 import { isEventTargetInputElement } from "../utils/is-event-target-input-element";
 import { truthy } from "../utils/truthy";
-import {
-  useCurrentStateAsRef,
-  useEditorId,
-  useWriteContext,
-} from "../utils/use-context";
+import { useCurrentStateAsRef, useWriteContext } from "../utils/use-context";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTRPC } from "../../trpc/react";
+import { usePageId } from "../../providers/page-id-provider";
 
 export const CopyPasteLayers: React.FC<{
   playerRef: React.RefObject<PlayerRef | null>;
@@ -31,7 +28,8 @@ export const CopyPasteLayers: React.FC<{
   const { setState } = timelineWriteContext;
   const state = useCurrentStateAsRef();
   const trpc = useTRPC();
-  const { id: editorId } = useEditorId();
+
+  const { id: documentId } = usePageId();
   const mutation = useMutation(
     trpc.asset.createAsset.mutationOptions({
       onSuccess: () => {
@@ -175,13 +173,13 @@ export const CopyPasteLayers: React.FC<{
             dropPosition: null,
             filename: file.name,
             mutation,
-            editorId,
+            documentId,
           });
         }
         return;
       }
     },
-    [playerRef, setState, timelineWriteContext, state, mutation],
+    [playerRef, setState, timelineWriteContext, state, mutation, documentId],
   );
 
   useEffect(() => {

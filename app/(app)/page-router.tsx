@@ -1,21 +1,11 @@
 "use client";
 
-import { WithSkeleton } from "@/components/ui/skeleton";
-import { useDocumentId } from "@/providers/document-id-provider";
-import { useDeferredValue } from "react";
-
+import { usePageId } from "@/providers/page-id-provider";
 import { notFound } from "next/navigation";
+import { DocumentPage } from "./video/[id]/document-page";
 
-import { EditPage } from "./edit-page";
-import { EditHome } from "../../edit-home";
-
-export function DeferredEditPage() {
-  const { id, type } = useDocumentId();
-
-  const { id: deferredId, type: deferredType } = useDeferredValue({
-    id,
-    type,
-  });
+export function PageRouter() {
+  const { id, type } = usePageId();
 
   if (!id) {
     return notFound();
@@ -33,16 +23,20 @@ export function DeferredEditPage() {
   // }
 
   // Render appropriate page based on type
-  if (deferredType === "provisional") {
-    return <EditHome id={deferredId} />;
-  }
+  // if (type === "provisional") {
+  //   return <DocumentHome id={id} />;
+  // }
+
+  // if (type === "project") {
+  //   return <ProjectPage id={id} />;
+  // }
 
   // if (deferredType === "shared") {
   //   return <SharedChatPage id={deferredId} />;
   // }
 
-  if (deferredType === "document") {
-    return <EditPage id={deferredId} />;
+  if (type === "document") {
+    return <DocumentPage id={id} />;
   }
 
   return notFound();

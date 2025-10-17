@@ -42,20 +42,9 @@ export function ContextSwitcher({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton className="data-[state=open]:text-sidebar-accent-foreground rounded-3xl focus-within:outline-none hover:bg-transparent">
               <div className="grid flex-1 text-left text-sm leading-tight">
-                {/* <span className="truncate font-medium">
+                <span className="truncate font-medium">
                   {activeContext.name}
-                </span> */}
-                <div className="flex flex-row items-center gap-2">
-                  <Image
-                    src="/logo-black.png"
-                    alt="Keyf"
-                    width={20}
-                    height={20}
-                  />
-                  <span className="font-corp font-valve tracking-tight">
-                    Keyf
-                  </span>
-                </div>
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -76,20 +65,23 @@ export function ContextSwitcher({
                 className="gap-2 p-2"
                 asChild
               >
-                <Link href={`/app/${context.id}`} key={context.id}>
+                <Link href={`/context/${context.id}`} key={context.id}>
                   {context.name}
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </Link>
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                <Plus className="size-4" />
-              </div>
-              <div className="text-muted-foreground font-medium">
-                Add context
-              </div>
+            <DropdownMenuItem className="gap-2 p-2" asChild>
+              <Link href="/app">
+                <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                  <Plus className="size-4" />
+                </div>
+
+                <div className="text-muted-foreground font-medium">
+                  Add context
+                </div>
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

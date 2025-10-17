@@ -24,12 +24,12 @@ import { useCanvasMarqueeSelection } from "../utils/marquee-selection/use-canvas
 import {
   useCurrentStateAsRef,
   useDimensions,
-  useEditorId,
   useWriteContext,
 } from "../utils/use-context";
 import { CanvasSizeContext } from "./canvas-size";
 import { useMutation } from "@tanstack/react-query";
 import { useTRPC } from "../../trpc/react";
+import { usePageId } from "../../providers/page-id-provider";
 
 export const EmptyCanvasContextMenuTrigger: React.FC<{
   children: React.ReactNode;
@@ -66,7 +66,7 @@ export const EmptyCanvasContextMenuTrigger: React.FC<{
   }, []);
 
   const trpc = useTRPC();
-  const { id: editorId } = useEditorId();
+  const { id: documentId } = usePageId();
   const mutation = useMutation(
     trpc.asset.createAsset.mutationOptions({
       onSuccess: () => {
@@ -124,7 +124,7 @@ export const EmptyCanvasContextMenuTrigger: React.FC<{
             file: blob,
             filename: imageName,
             mutation,
-            editorId,
+            documentId,
           });
         } else if (item.types.includes("text/html")) {
           const blob = await item.getType("text/html");

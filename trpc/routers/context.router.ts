@@ -1,6 +1,7 @@
 import {
   getContextById,
   getContextsByUserId,
+  getDocumentsByProjectId,
   getProjectsByContextId,
   saveContext,
 } from "@/lib/db/queries";
@@ -43,7 +44,20 @@ export const contextRouter = createTRPCRouter({
       return brand;
     }),
 
-  saveBrand: protectedProcedure
+  getDocumentsByContextId: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const projects = await getProjectsByContextId({ id: input.id });
+      console.log("projects", projects);
+      const documents = await Promise.all(
+        projects.map((project) => getDocumentsByProjectId(project.id)),
+      );
+      console.log("documents", documents.flat());
+
+      return documents.flat();
+    }),
+
+  saveContext: protectedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -58,7 +72,7 @@ export const contextRouter = createTRPCRouter({
         name: input.name,
         instructions: input.instructions,
       });
-      return brand;
+      return { id: id };
     }),
   getAllBrands: protectedProcedure.query(async ({ ctx }) => {
     const brands = await getContextsByUserId({ userId: ctx.user.id });

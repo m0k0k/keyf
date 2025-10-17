@@ -1,46 +1,112 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/react";
-import { useDocumentId } from "@/providers/document-id-provider";
+import { usePageId } from "@/providers/page-id-provider";
+import { Button } from "./ui/button";
+import { addItem } from "@/editor/state/actions/add-item";
+import { addAssetToState } from "@/editor/state/actions/add-asset-to-state";
+import { useWriteContext } from "@/editor/utils/use-context";
 export const Assets = () => {
   const trpc = useTRPC();
-  const { id: documentId } = useDocumentId();
+  const { id } = usePageId();
+  const { setState } = useWriteContext();
   const { data: assets } = useQuery(
-    trpc.asset.getAssetsByDocumentId.queryOptions({ documentId: documentId }),
+    trpc.asset.getAssetsByDocumentId.queryOptions({ documentId: id }),
+  );
+  const { data: videoAssets } = useQuery(
+    trpc.asset.getVideoAssetsByDocumentId.queryOptions({
+      documentId: id,
+    }),
+  );
+  const { data: imageAssets } = useQuery(
+    trpc.asset.getImageAssetsByDocumentId.queryOptions({
+      documentId: id,
+    }),
   );
   return (
-    <div className="scrollbar-thin absolute top-0 left-0 z-10 flex h-full w-8 flex-col items-center justify-start gap-1 overflow-y-auto pt-1 opacity-50 transition-opacity duration-300 hover:opacity-100">
-      {assets?.map((asset) => (
-        <div
-          key={asset.id}
-          className="flex flex-col items-center justify-center gap-1 rounded-md bg-neutral-900 text-neutral-600 shadow-sm transition-colors hover:bg-neutral-800"
-        >
-          {/* <span className="truncate font-medium">{asset.filename}</span> */}
-          {/* <span className="text-xs text-neutral-400">{asset.type}</span> */}
-          {asset.type === "image" && (
-            <img
-              src={asset.remoteUrl || ""}
-              alt={asset.filename}
-              width={60}
-              height={60}
-              className="rounded-md"
-            />
-          )}
-          {asset.type === "video" && (
-            <video
-              src={asset.remoteUrl || ""}
-              width={60}
-              height={60}
-              className="rounded-md"
-            />
-          )}
-        </div>
-      ))}
-      {assets?.length === 0 && (
-        <div className="px-2 py-1 text-xs text-neutral-500 italic">
-          No assets found.
-        </div>
-      )}
+    <div className="scrollbar-thin absolute top-10 left-0 z-10 flex h-[240px] w-28 flex-col items-center justify-start gap-1 overflow-auto overflow-y-auto pt-1 opacity-50 transition-opacity duration-300 hover:opacity-100">
+      <div className="scrollbar-thin grid grid-cols-1 gap-1">
+        {videoAssets?.map((asset) => (
+          <div
+            key={asset.id}
+            className="group flex items-center gap-3 rounded-md bg-neutral-950/80 px-1.5 py-1 shadow transition hover:bg-neutral-900"
+          >
+            <div className="flex-shrink-0">
+              <video
+                src={asset.remoteUrl || ""}
+                className="h-14 w-14 rounded object-cover"
+              />
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                // Add asset and item to state
+                setState({
+                  update: (state) => {
+                    const withItem = addItem({
+                      state,
+                      item: {
+                        type: "video",
+                        assetId: asset.id,
+                        durationInFrames: 100,
+                        from: 0,
+                        top: 0,
+                        left: 0,
+                        width: 1024,
+                        height: 1920,
+                        isDraggingInTimeline: false,
+                        id: asset.id, // data.id || "1",
+                        opacity: 1,
+                        borderRadius: 0,
+                        rotation: 0,
+                        keepAspectRatio: true,
+                        fadeInDurationInSeconds: 0,
+                        fadeOutDurationInSeconds: 0,
+                        videoStartFromInSeconds: 0,
+                        decibelAdjustment: 0,
+                        playbackRate: 1,
+                        audioFadeInDurationInSeconds: 0,
+                        audioFadeOutDurationInSeconds: 0,
+                      },
+                      select: true,
+                      position: { type: "front" },
+                    });
+                    const withAsset = addAssetToState({
+                      state: withItem,
+                      asset: {
+                        id: asset.id,
+                        type: "video",
+                        filename: "generated.mp4",
+                        width: 1024,
+                        height: 1920,
+                        size: 13213,
+                        remoteUrl: asset.remoteUrl,
+                        remoteFileKey: asset.id,
+                        mimeType: "video/mp4",
+                        durationInSeconds: asset.durationInSeconds,
+                        hasAudioTrack: asset.hasAudioTrack,
+                      },
+                    });
+                    return {
+                      ...withAsset,
+                      assetStatus: {
+                        ...state.assetStatus,
+                        [asset.id]: {
+                          type: "uploaded",
+                        },
+                      },
+                    };
+                  },
+                  commitToUndoStack: true,
+                });
+              }}
+            >
+              +
+            </Button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

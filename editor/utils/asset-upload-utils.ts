@@ -42,7 +42,7 @@ export const attemptAssetUpload = async ({
   asset,
   file,
   mutation,
-  editorId,
+  documentId,
 }: {
   uploadUrls: UploadResult;
   setState: SetState;
@@ -54,7 +54,7 @@ export const attemptAssetUpload = async ({
       documentId: string;
     }) => Promise<{ success: boolean }>;
   };
-  editorId: string;
+  documentId: string;
 }): Promise<UploadResult> => {
   await uploadWithProgressUpdates(
     file,
@@ -83,7 +83,7 @@ export const attemptAssetUpload = async ({
   });
 
   await mutation.mutateAsync({
-    documentId: editorId,
+    documentId: documentId,
     asset: {
       ...asset,
       remoteUrl: uploadUrls.readUrl,
@@ -102,7 +102,7 @@ export const performAssetUpload = async ({
   presignResultPromise,
   file,
   mutation,
-  editorId,
+  documentId,
 }: {
   setState: SetState;
   asset: EditorStarterAsset;
@@ -114,7 +114,7 @@ export const performAssetUpload = async ({
       documentId: string;
     }) => Promise<{ success: boolean }>;
   };
-  editorId: string;
+  documentId: string;
 }): Promise<void> => {
   const presignResult = await presignResultPromise;
   if (presignResult.type === "file-too-large") {
@@ -185,7 +185,7 @@ export const performAssetUpload = async ({
       asset,
       file,
       mutation,
-      editorId,
+      documentId,
     });
   } catch (uploadError) {
     setState({
